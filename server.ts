@@ -2541,6 +2541,89 @@ Do not include any markdown format tags (like \`\`\`json) in your response, retu
       if (progress !== undefined) project.progress = Number(progress);
       if (status !== undefined) project.status = status;
       if (githubRepo !== undefined) project.githubRepo = githubRepo;
+      if (req.body.maxAllowedProgress !== undefined) project.maxAllowedProgress = Number(req.body.maxAllowedProgress);
+      if (req.body.unlockedPhases !== undefined) project.unlockedPhases = req.body.unlockedPhases;
+      if (req.body.extensionStatus !== undefined) project.extensionStatus = req.body.extensionStatus;
+      if (req.body.requestedExtensionDays !== undefined) project.requestedExtensionDays = req.body.requestedExtensionDays;
+      if (req.body.extensionReason !== undefined) project.extensionReason = req.body.extensionReason;
+
+      await project.save();
+      io.emit("project_updated", { projectId: project._id, project });
+      res.json({ success: true, project: { id: project._id, ...project.toObject() } });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  // Approve Milestone Endpoint (Coordinator unlocks next 25% phase)
+  app.post("/api/projects/:id/approve-milestone", async (req, res) => {
+    try {
+      const { milestone } = req.body;
+      const project = await Project.findOne({ $or: [{ _id: req.params.id }, { id: req.params.id }] });
+      if (!project) return res.status(404).json({ error: "Project workspace not found" });
+
+      const currentUnlocked = Array.isArray(project.unlockedPhases) ? project.unlockedPhases : [25];
+      const milestoneNum = Number(milestone);
+
+      if (!currentUnlocked.includes(milestoneNum)) {
+        currentUnlocked.push(milestoneNum);
+      }
+
+      // Unlock next threshold (e.g. 25 -> 50, 50 -> 75, 75 -> 100)
+      const nextLimit = Math.min(100, milestoneNum + 25);
+      project.unlockedPhases = currentUnlocked;
+      project.maxAllowedProgress = Math.max(project.maxAllowedProgress || 25, nextLimit);
+
+      if (milestoneNum >= 100) {
+        project.status = "Completed";
+      }
+
+      await project.save();
+      io.emit("project_updated", { projectId: project._id, project });
+      res.json({ success: true, project: { id: project._id, ...project.toObject() } });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  // Request Extension Endpoint (Student submits time extension request)
+  app.post("/api/projects/:id/request-extension", async (req, res) => {
+    try {
+      const { requestedDays, reason } = req.body;
+      const project = await Project.findOne({ $or: [{ _id: req.params.id }, { id: req.params.id }] });
+      if (!project) return res.status(404).json({ error: "Project workspace not found" });
+
+      project.extensionStatus = "PENDING";
+      project.requestedExtensionDays = Number(requestedDays) || 7;
+      project.extensionReason = reason || "Additional time required for project completion.";
+      project.extensionRequestedAt = new Date().toISOString();
+
+      await project.save();
+      io.emit("project_updated", { projectId: project._id, project });
+      res.json({ success: true, project: { id: project._id, ...project.toObject() } });
+    } catch (e: any) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  // Respond Extension Endpoint (Coordinator approves/rejects extension)
+  app.post("/api/projects/:id/respond-extension", async (req, res) => {
+    try {
+      const { approve } = req.body;
+      const project = await Project.findOne({ $or: [{ _id: req.params.id }, { id: req.params.id }] });
+      if (!project) return res.status(404).json({ error: "Project workspace not found" });
+
+      if (approve) {
+        project.extensionStatus = "APPROVED";
+        // Extend deadline by requestedExtensionDays
+        const daysToAdd = project.requestedExtensionDays || 7;
+        const currentDeadline = project.deadline ? new Date(project.deadline) : new Date();
+        currentDeadline.setDate(currentDeadline.getDate() + daysToAdd);
+        project.deadline = currentDeadline;
+        project.status = "Active";
+      } else {
+        project.extensionStatus = "REJECTED";
+      }
 
       await project.save();
       io.emit("project_updated", { projectId: project._id, project });

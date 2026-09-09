@@ -44,6 +44,9 @@ export default function ProjectDetails() {
     submitDailyReport,
     checkDailyReportSubmittedToday,
     analyzeProject,
+    approveProjectMilestone,
+    requestProjectExtension,
+    respondProjectExtension,
     addToast,
   } = useStore();
 
@@ -52,6 +55,12 @@ export default function ProjectDetails() {
   const [abstractHistory, setAbstractHistory] = React.useState<any[]>([]);
   const [showDailyReportModal, setShowDailyReportModal] = React.useState(false);
   const [dailyReportSubmitted, setDailyReportSubmitted] = React.useState(false);
+
+  // Time Extension Request State
+  const [showExtensionModal, setShowExtensionModal] = React.useState(false);
+  const [extensionDaysInput, setExtensionDaysInput] = React.useState(7);
+  const [extensionReasonInput, setExtensionReasonInput] = React.useState("");
+  const [submittingExtension, setSubmittingExtension] = React.useState(false);
 
   // GitHub Commits State
   const [commits, setCommits] = React.useState<CommitInfo[]>([]);
@@ -378,13 +387,15 @@ export default function ProjectDetails() {
           </h2>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 mt-1 font-semibold">
             {(() => {
-              const findStudentName = (idStr: string) => {
-                const found = students.find((s) => (s.userId === idStr || s.id === idStr || s._id === idStr));
-                return found ? found.name : idStr;
+              const findStudentDetails = (idStr: string) => {
+                const found = students.find((s) => (s.userId === idStr || (s as any).id === idStr || (s as any)._id === idStr));
+                if (!found) return idStr;
+                const regNo = found.registerNumber || (found as any).rollNo || found.userId;
+                return `${found.name} (${regNo})`;
               };
-              const leaderDisplay = project.teamLeader ? findStudentName(project.teamLeader) : "None";
+              const leaderDisplay = project.teamLeader ? findStudentDetails(project.teamLeader) : "None";
               const membersDisplay = project.teamMembers && project.teamMembers.length > 0
-                ? project.teamMembers.map(findStudentName).join(", ")
+                ? project.teamMembers.map(findStudentDetails).join(", ")
                 : "None";
 
               return (
@@ -537,21 +548,181 @@ export default function ProjectDetails() {
                       />
                     </div>
 
-                    {/* Completion Percentage (Student) */}
+                    {/* Completion Percentage (Student / Coordinator) */}
                     <div className="space-y-1 text-left">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                        Project Completion Percentage ({progress}%)
-                      </label>
-                      <input
-                        type="range"
-                        min="0"
-                        max="100"
-                        value={progress}
-                        onChange={(e) => setProgress(Number(e.target.value))}
-                        className="w-full h-2 bg-slate-200 rounded-lg cursor-pointer accent-blue-600 mt-3"
-                      />
+                      {(() => {
+                        const maxLimit = project?.maxAllowedProgress || 25;
+                        return (
+                          <>
+                            <div className="flex justify-between items-center">
+                              <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                                Project Completion Percentage ({progress}%)
+                              </label>
+                              {currentUser?.role === "student" && (
+                                <span className="text-[10px] font-extrabold px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-200 rounded">
+                                  Unlocked Up To: {maxLimit}%
+                                </span>
+                              )}
+                            </div>
+                            <input
+                              type="range"
+                              min="0"
+                              max="100"
+                              value={progress}
+                              onChange={(e) => {
+                                const val = Number(e.target.value);
+                                if (currentUser?.role === "student" && val > maxLimit) {
+                                  addToast(`Progress locked at ${maxLimit}%. Coordinator review for ${maxLimit}% milestone is required to unlock further access.`, "info");
+                                  setProgress(maxLimit);
+                                } else {
+                                  setProgress(val);
+                                }
+                              }}
+                              className="w-full h-2 bg-slate-200 rounded-lg cursor-pointer accent-blue-600 mt-3"
+                            />
+                          </>
+                        );
+                      })()}
                     </div>
                   </div>
+
+                  {/* 25% Milestone Review & Access Control Card */}
+                  <div className="bg-white border border-blue-200/60 p-4 rounded-2xl space-y-3.5 shadow-xs text-left">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                      <div>
+                        <h4 className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                          <TrendingUp className="w-4 h-4 text-blue-600" />
+                          Quarterly Milestone Review & Access Control (Every 25%)
+                        </h4>
+                        <p className="text-[11px] text-slate-500 font-medium">
+                          Reviews occur at 25%, 50%, 75%, and 100%. Access to each next phase requires coordinator approval.
+                        </p>
+                      </div>
+                      <span className="text-xs font-extrabold px-3 py-1 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg self-start sm:self-auto">
+                        Current Access Limit: {project?.maxAllowedProgress || 25}%
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {[25, 50, 75, 100].map((m) => {
+                        const maxLimit = project?.maxAllowedProgress || 25;
+                        const isUnlocked = (project?.unlockedPhases || [25]).includes(m) || maxLimit >= m;
+
+                        return (
+                          <div
+                            key={m}
+                            className={`p-3 rounded-xl border text-center space-y-2 transition ${
+                              isUnlocked
+                                ? "bg-emerald-50/80 border-emerald-200 text-emerald-900"
+                                : "bg-slate-50 border-slate-200 text-slate-400"
+                            }`}
+                          >
+                            <span className="text-xs font-black block">Phase {m / 25} ({m}%)</span>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full inline-block ${
+                              isUnlocked ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-600"
+                            }`}>
+                              {isUnlocked ? "✓ Unlocked" : "🔒 Review Locked"}
+                            </span>
+
+                            {(currentUser?.role as string) === "coordinator" && !isUnlocked && (
+                              <button
+                                type="button"
+                                onClick={() => approveProjectMilestone(currentProjectId, m - 25)}
+                                className="w-full py-1.5 px-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[10px] font-bold transition shadow-xs mt-1"
+                              >
+                                Approve {m - 25}% & Unlock {m}%
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {progress >= (project?.maxAllowedProgress || 25) && (project?.maxAllowedProgress || 25) < 100 && (
+                      <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl text-xs font-semibold flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <span className="leading-relaxed">
+                          ⚠️ Progress reached current milestone limit ({project?.maxAllowedProgress || 25}%). Coordinator review for {project?.maxAllowedProgress || 25}% milestone is required to unlock access to {(project?.maxAllowedProgress || 25) + 25}%.
+                        </span>
+                        {(currentUser?.role as string) === "coordinator" && (
+                          <button
+                            type="button"
+                            onClick={() => approveProjectMilestone(currentProjectId, project?.maxAllowedProgress || 25)}
+                            className="whitespace-nowrap px-3 py-1.5 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-lg transition shadow-xs"
+                          >
+                            Approve Review & Unlock {(project?.maxAllowedProgress || 25) + 25}%
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Time Extension Request Panel */}
+                  {(progress >= 100 || (project?.deadline && new Date(project.deadline) < new Date()) || project?.extensionStatus === "PENDING" || project?.extensionStatus === "APPROVED") && (
+                    <div className="bg-gradient-to-r from-amber-50/90 to-orange-50/90 border border-amber-200 p-4 rounded-2xl space-y-3 text-left">
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <div>
+                          <h4 className="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+                            <Calendar className="w-4 h-4 text-amber-600" />
+                            Project Time Extension Management
+                          </h4>
+                          <p className="text-[11px] text-amber-700 font-medium mt-0.5">
+                            {progress >= 100
+                              ? "Project completed 100%. Submit an extension request if further development time or deliverables are required."
+                              : "Deadline extension request workflow for post-completion or further development."}
+                          </p>
+                        </div>
+
+                        {(currentUser?.role as string) === "student" && project?.extensionStatus !== "PENDING" && (
+                          <button
+                            type="button"
+                            onClick={() => setShowExtensionModal(true)}
+                            className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl text-xs transition shadow-xs whitespace-nowrap"
+                          >
+                            + Request Time Extension
+                          </button>
+                        )}
+                      </div>
+
+                      {project?.extensionStatus === "PENDING" && (
+                        <div className="p-3.5 bg-white border border-amber-300 rounded-xl space-y-2 text-xs text-amber-900 shadow-2xs">
+                          <div className="flex justify-between items-center">
+                            <span className="font-extrabold text-amber-800">
+                              ⏳ Requested Extension: +{project.requestedExtensionDays || 7} Days
+                            </span>
+                            <span className="text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded-md font-extrabold border border-amber-200">
+                              Pending Coordinator Review
+                            </span>
+                          </div>
+                          <p className="text-slate-600 italic font-medium">&quot;{project.extensionReason}&quot;</p>
+
+                          {((currentUser?.role as string) === "coordinator" || (currentUser?.role as string) === "master_admin") && (
+                            <div className="flex gap-2 pt-2 border-t border-amber-200/60">
+                              <button
+                                type="button"
+                                onClick={() => respondProjectExtension(currentProjectId, true)}
+                                className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition shadow-xs"
+                              >
+                                ✓ Approve Extension (+{project.requestedExtensionDays || 7} Days)
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => respondProjectExtension(currentProjectId, false)}
+                                className="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-500 text-white rounded-lg text-xs font-bold transition shadow-xs"
+                              >
+                                ✕ Reject Request
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {project?.extensionStatus === "APPROVED" && (
+                        <div className="text-xs text-emerald-800 font-bold bg-emerald-100/80 border border-emerald-300 p-3 rounded-xl flex items-center gap-2">
+                          <span>✓ Extension of +{project.requestedExtensionDays || 7} days approved by coordinator! Deadline updated: {new Date(project.deadline!).toLocaleDateString()}.</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
@@ -963,6 +1134,88 @@ export default function ProjectDetails() {
                   className="flex-1 py-2.5 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold transition shadow-lg shadow-blue-500/10"
                 >
                   Submit Log
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Extension Request Modal */}
+      {showExtensionModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="max-w-md w-full glass-card p-6 border border-amber-200/50 shadow-2xl space-y-4 text-left">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <h3 className="text-base font-bold text-slate-800 flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-amber-600" />
+                Request Time Extension
+              </h3>
+              <button
+                type="button"
+                onClick={() => setShowExtensionModal(false)}
+                className="text-slate-400 hover:text-slate-600 font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setSubmittingExtension(true);
+                const ok = await requestProjectExtension(currentProjectId, extensionDaysInput, extensionReasonInput);
+                setSubmittingExtension(false);
+                if (ok) {
+                  setShowExtensionModal(false);
+                  setExtensionReasonInput("");
+                }
+              }}
+              className="space-y-4"
+            >
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                  Requested Additional Days
+                </label>
+                <select
+                  value={extensionDaysInput}
+                  onChange={(e) => setExtensionDaysInput(Number(e.target.value))}
+                  className="w-full px-4 py-2.5 rounded-xl glass-input text-xs font-semibold cursor-pointer bg-white text-slate-800"
+                >
+                  <option value={7}>7 Days (1 Week)</option>
+                  <option value={14}>14 Days (2 Weeks)</option>
+                  <option value={21}>21 Days (3 Weeks)</option>
+                  <option value={30}>30 Days (1 Month)</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                  Reason / Scope for Time Extension <span className="text-rose-500">*</span>
+                </label>
+                <textarea
+                  required
+                  rows={3}
+                  value={extensionReasonInput}
+                  onChange={(e) => setExtensionReasonInput(e.target.value)}
+                  placeholder="Explain why further time or access is required after 100% completion or deadline..."
+                  className="w-full px-4 py-2.5 rounded-xl glass-input text-xs text-slate-800"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowExtensionModal(false)}
+                  className="flex-1 py-2.5 px-4 bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-800 rounded-xl text-xs font-semibold transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingExtension || !extensionReasonInput.trim()}
+                  className="flex-1 py-2.5 px-4 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-semibold transition shadow-lg shadow-amber-500/10 disabled:opacity-50"
+                >
+                  {submittingExtension ? "Submitting..." : "Submit Extension Request"}
                 </button>
               </div>
             </form>

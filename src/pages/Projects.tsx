@@ -165,7 +165,7 @@ export default function Projects() {
                 <div className="flex items-center justify-between text-xs text-slate-500">
                   <div className="flex items-center gap-1 font-semibold">
                     <Users className="w-3.5 h-3.5 text-slate-400" />
-                    <span>{project.teamMembers.length} Members</span>
+                    <span>{project.teamMembers.length} / 5 Members</span>
                   </div>
                   <span className="flex items-center gap-1 group-hover:text-blue-600 font-bold transition-colors">
                     Workspace Hub

@@ -77,6 +77,12 @@ export interface ProjectInfo {
   status: "Not Started" | "Planning" | "Development" | "Testing" | "Completed" | "On Hold" | "Active";
   files: FileData[];
   githubRepo?: string;
+  maxAllowedProgress?: number;
+  unlockedPhases?: number[];
+  extensionStatus?: "NONE" | "PENDING" | "APPROVED" | "REJECTED";
+  requestedExtensionDays?: number;
+  extensionReason?: string;
+  extensionRequestedAt?: string;
   createdAt?: string;
 }
 
@@ -341,6 +347,9 @@ interface AppState {
   submitDailyReport: (reportData: Partial<DailyReportInfo>) => Promise<boolean>;
   checkDailyReportSubmittedToday: (studentId: string) => Promise<boolean>;
   analyzeProject: (projectData: any, githubStats: any) => Promise<string>;
+  approveProjectMilestone: (projectId: string, milestone: number) => Promise<boolean>;
+  requestProjectExtension: (projectId: string, requestedDays: number, reason: string) => Promise<boolean>;
+  respondProjectExtension: (projectId: string, approve: boolean) => Promise<boolean>;
 
   // Activity Analytics Actions
   fetchActivityAnalytics: () => Promise<void>;
@@ -1017,6 +1026,69 @@ export const useStore = create<AppState>((set, get) => ({
       if (!response.ok) throw new Error(data.error || "Update failed");
       
       get().addToast("Project updated successfully", "success");
+      if (get().activeProject?.id === projectId || get().activeProject?._id === projectId) {
+        set({ activeProject: data.project });
+      }
+      get().fetchProjects();
+      return true;
+    } catch (e: any) {
+      get().addToast(e.message, "error");
+      return false;
+    }
+  },
+
+  approveProjectMilestone: async (projectId, milestone) => {
+    try {
+      const response = await fetch(`${API_BASE}/api/projects/${projectId}/approve-milestone`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ milestone }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Failed to approve milestone");
+      get().addToast(`Milestone ${milestone}% review approved! Next phase unlocked.`, "success");
+      if (get().activeProject?.id === projectId || get().activeProject?._id === projectId) {
+        set({ activeProject: data.project });
+      }
+      get().fetchProjects();
+      return true;
+    } catch (e: any) {
+      get().addToast(e.message, "error");
+      return false;
+    }
+  },
+
+  requestProjectExtension: async (projectId, requestedDays, reason) => {
+    try {
+      const response = await fetch(`${API_BASE}/api/projects/${projectId}/request-extension`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requestedDays, reason }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Extension request failed");
+      get().addToast("Time extension request submitted to coordinator", "info");
+      if (get().activeProject?.id === projectId || get().activeProject?._id === projectId) {
+        set({ activeProject: data.project });
+      }
+      get().fetchProjects();
+      return true;
+    } catch (e: any) {
+      get().addToast(e.message, "error");
+      return false;
+    }
+  },
+
+  respondProjectExtension: async (projectId, approve) => {
+    try {
+      const response = await fetch(`${API_BASE}/api/projects/${projectId}/respond-extension`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ approve }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "Failed to respond to extension");
+      get().addToast(approve ? "Time extension approved! Deadline extended." : "Extension request rejected.", approve ? "success" : "info");
       if (get().activeProject?.id === projectId || get().activeProject?._id === projectId) {
         set({ activeProject: data.project });
       }

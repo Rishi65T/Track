@@ -25,12 +25,17 @@ export function StudentSelector({
   // Normalize student IDs for matching
   const getStudentId = (s: UserInfo) => s.userId || (s as any).id || (s as any)._id || "";
 
+  const MAX_MEMBERS = 5;
+  const [maxLimitReached, setMaxLimitReached] = useState(false);
+
   // Handle Team Leader Selection
   const handleLeaderSelect = (leaderId: string) => {
     onLeaderChange(leaderId);
-    // Automatically include Team Leader in members list if not already present
+    // Automatically include Team Leader in members list if not already present and limit not exceeded
     if (leaderId && !selectedMemberIds.includes(leaderId)) {
-      onMembersChange([...selectedMemberIds, leaderId]);
+      if (selectedMemberIds.length < MAX_MEMBERS) {
+        onMembersChange([...selectedMemberIds, leaderId]);
+      }
     }
   };
 
@@ -39,6 +44,7 @@ export function StudentSelector({
     if (disabled) return;
     if (selectedMemberIds.includes(studentId)) {
       // Removing member
+      setMaxLimitReached(false);
       const updated = selectedMemberIds.filter((id) => id !== studentId);
       onMembersChange(updated);
       // If removing the current leader, reset leader selection
@@ -46,7 +52,13 @@ export function StudentSelector({
         onLeaderChange(updated.length > 0 ? updated[0] : "");
       }
     } else {
-      // Adding member
+      // Adding member - check max 5 limit
+      if (selectedMemberIds.length >= MAX_MEMBERS) {
+        setMaxLimitReached(true);
+        setTimeout(() => setMaxLimitReached(false), 4000);
+        return;
+      }
+      setMaxLimitReached(false);
       onMembersChange([...selectedMemberIds, studentId]);
     }
   };
@@ -65,6 +77,7 @@ export function StudentSelector({
       !query ||
       s.name.toLowerCase().includes(query) ||
       s.email.toLowerCase().includes(query) ||
+      (s.registerNumber && s.registerNumber.toLowerCase().includes(query)) ||
       (s.department && s.department.toLowerCase().includes(query)) ||
       sId.toLowerCase().includes(query)
     );
@@ -91,9 +104,10 @@ export function StudentSelector({
             <option value="">-- Choose Team Leader from Student Records --</option>
             {students.map((s) => {
               const sId = getStudentId(s);
+              const regNo = s.registerNumber || (s as any).rollNo || s.email || sId;
               return (
                 <option key={sId} value={sId} className="bg-white text-slate-800 font-medium">
-                  {s.name} ({s.department || "CS"} - Year {s.year || "3"}) &bull; {s.email || sId}
+                  {s.name} (Reg: {regNo}) &bull; {s.department || "CS"} - Year {s.year || "3"}
                 </option>
               );
             })}
@@ -104,7 +118,10 @@ export function StudentSelector({
             <Crown className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
             <span>
               Designated Leader:{" "}
-              <strong>{findStudent(selectedLeaderId)?.name || selectedLeaderId}</strong>
+              <strong>
+                {findStudent(selectedLeaderId)?.name || selectedLeaderId}
+                {findStudent(selectedLeaderId)?.registerNumber ? ` (${findStudent(selectedLeaderId)?.registerNumber})` : ""}
+              </strong>
             </span>
           </div>
         )}
@@ -115,12 +132,19 @@ export function StudentSelector({
         <div className="flex justify-between items-center">
           <label className="text-xs font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
             <Users className="w-3.5 h-3.5 text-blue-600" />
-            Select Team Members ({selectedMemberIds.length} Selected)
+            Select Team Members ({selectedMemberIds.length} / {MAX_MEMBERS} Max)
           </label>
           <span className="text-[11px] font-semibold text-slate-400">
-            Based strictly on Student Records
+            Strict Limit: Max 5 Students
           </span>
         </div>
+
+        {/* Max 5 Limit Warning Banner */}
+        {maxLimitReached && (
+          <div className="p-2.5 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs font-bold flex items-center gap-2 animate-in fade-in duration-150">
+            <span>⚠️ Maximum limit of 5 students per team reached! Unselect a student to add another.</span>
+          </div>
+        )}
 
         {/* Selected Members Chips Box */}
         <div className="p-3 bg-slate-50/70 border border-slate-200/80 rounded-xl min-h-[52px] flex flex-wrap items-center gap-2">
@@ -250,6 +274,9 @@ export function StudentSelector({
                             <div className="text-left">
                               <div className="flex items-center gap-2">
                                 <span className="font-bold text-xs text-slate-800">{s.name}</span>
+                                <span className="text-[10px] text-blue-600 font-bold bg-blue-50 border border-blue-200/60 px-1.5 py-0.5 rounded">
+                                  {s.registerNumber || (s as any).rollNo || sId}
+                                </span>
                                 {isLeader && (
                                   <span className="bg-amber-100 text-amber-800 text-[9px] px-1.5 py-0.5 rounded font-extrabold flex items-center gap-0.5 border border-amber-300">
                                     <Crown className="w-2.5 h-2.5 text-amber-700" /> LEADER
