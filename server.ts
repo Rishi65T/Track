@@ -2425,7 +2425,7 @@ Do not include any markdown format tags (like \`\`\`json) in your response, retu
 
   app.post("/api/projects", async (req, res) => {
     try {
-      const { name, department, domain, mentorId, startDate, lab, studentId } = req.body;
+      const { name, department, domain, mentorId, startDate, lab, studentId, teamLeader, teamMembers } = req.body;
       if (!name || !department) {
         return res.status(400).json({ error: "Project Title and Department are required" });
       }
@@ -2441,8 +2441,20 @@ Do not include any markdown format tags (like \`\`\`json) in your response, retu
       const projDeadline = new Date(projStartDate);
       projDeadline.setMonth(projDeadline.getMonth() + 2);
 
-      // Always include studentId in teamMembers
-      const teamMembersList = studentId ? [studentId] : [];
+      let teamMembersList: string[] = Array.isArray(teamMembers)
+        ? teamMembers
+        : typeof teamMembers === 'string'
+        ? teamMembers.split(',').map((s) => s.trim()).filter(Boolean)
+        : [];
+
+      if (studentId && !teamMembersList.includes(studentId)) {
+        teamMembersList.push(studentId);
+      }
+      if (teamLeader && !teamMembersList.includes(teamLeader)) {
+        teamMembersList.push(teamLeader);
+      }
+
+      const finalLeader = teamLeader || studentId || (teamMembersList.length > 0 ? teamMembersList[0] : "");
 
       const newProj = new Project({
         name,
@@ -2462,7 +2474,7 @@ Do not include any markdown format tags (like \`\`\`json) in your response, retu
         references: "",
         futureEnhancements: "",
         teamMembers: teamMembersList,
-        teamLeader: studentId || "",
+        teamLeader: finalLeader,
         progress: 0,
         status: mentorId ? "Active" : "MENTOR_PENDING",
         files: []

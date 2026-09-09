@@ -332,7 +332,7 @@ interface AppState {
 
   // Projects
   fetchProjects: () => Promise<void>;
-  createProject: (name: string, department: string, domain?: string, mentorId?: string) => Promise<ProjectInfo | null>;
+  createProject: (name: string, department: string, domain?: string, mentorId?: string, teamLeader?: string, teamMembers?: string[]) => Promise<ProjectInfo | null>;
   updateProject: (projectId: string, updates: Partial<ProjectInfo>) => Promise<boolean>;
   uploadFile: (projectId: string, file: File) => Promise<boolean>;
   fetchAbstractHistory: (projectId: string) => Promise<any[]>;
@@ -342,22 +342,22 @@ interface AppState {
   checkDailyReportSubmittedToday: (studentId: string) => Promise<boolean>;
   analyzeProject: (projectData: any, githubStats: any) => Promise<string>;
 
+  // Activity Analytics Actions
+  fetchActivityAnalytics: () => Promise<void>;
+
   // Hackathons & Proof Verification
   fetchHackathons: () => Promise<void>;
   createHackathon: (hackathonData: Partial<HackathonInfo>) => Promise<boolean>;
   registerHackathonWithProof: (hackathonId: string, studentId: string, screenshotFile: File) => Promise<boolean>;
   fetchHackathonRegistrations: (studentId?: string) => Promise<void>;
   verifyHackathonRegistration: (registrationId: string, status: "Verified" | "Rejected", reason?: string) => Promise<boolean>;
-  expressHackathonInterest: (hackathonId: string, studentId: studentId) => Promise<boolean>;
+  expressHackathonInterest: (hackathonId: string, studentId: string) => Promise<boolean>;
   fetchHackathonInterests: (studentId?: string) => Promise<void>;
 
   // Student Submitted Opportunities
   submitStudentOpportunity: (oppData: any) => Promise<boolean>;
   fetchPendingOpportunities: () => Promise<OpportunityInfo[]>;
   approveOpportunity: (oppId: string, approve: boolean) => Promise<boolean>;
-
-  // Analytics
-  fetchActivityAnalytics: () => Promise<void>;
 
   // Tasks
   fetchTasks: () => Promise<void>;
@@ -986,12 +986,12 @@ export const useStore = create<AppState>((set, get) => ({
     } catch (e) {}
   },
 
-  createProject: async (name, department, domain, mentorId) => {
+  createProject: async (name, department, domain, mentorId, teamLeader, teamMembers) => {
     try {
       const response = await fetch(`${API_BASE}/api/projects`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, department, domain, mentorId }),
+        body: JSON.stringify({ name, department, domain, mentorId, teamLeader, teamMembers }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Failed to create project");

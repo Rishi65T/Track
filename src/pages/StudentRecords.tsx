@@ -1,6 +1,6 @@
 import React from "react";
 import { useStore } from "../store.ts";
-import { Users, FileText, ChevronDown, ChevronUp, Calendar, Github, Link2, ClipboardCheck } from "lucide-react";
+import { Users, FileText, ChevronDown, ChevronUp, Calendar, Github, Link2, ClipboardCheck, Crown, FolderPlus } from "lucide-react";
 
 interface Record {
   student: {
@@ -35,20 +35,55 @@ interface Record {
 }
 
 export default function StudentRecords() {
-  const { fetchStudentRecords } = useStore();
+  const { fetchStudentRecords, projects, fetchProjects, updateProject, currentUser } = useStore();
   const [records, setRecords] = React.useState<Record[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [expandedRecord, setExpandedRecord] = React.useState<string | null>(null);
 
+  // Quick Assignment Modal State
+  const [assigningStudent, setAssigningStudent] = React.useState<Record['student'] | null>(null);
+  const [selectedProjectId, setSelectedProjectId] = React.useState("");
+  const [asLeader, setAsLeader] = React.useState(false);
+  const [savingAssign, setSavingAssign] = React.useState(false);
+
   React.useEffect(() => {
+    fetchProjects();
     fetchStudentRecords().then((data) => {
       setRecords(data);
       setLoading(false);
     });
-  }, [fetchStudentRecords]);
+  }, [fetchStudentRecords, fetchProjects]);
 
   const toggleExpand = (studentId: string) => {
     setExpandedRecord(expandedRecord === studentId ? null : studentId);
+  };
+
+  const handleAssignSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!assigningStudent || !selectedProjectId) return;
+    setSavingAssign(true);
+
+    const targetProj = projects.find(p => (p.id === selectedProjectId || p._id === selectedProjectId));
+    if (targetProj) {
+      const currentMembers = targetProj.teamMembers || [];
+      const updatedMembers = currentMembers.includes(assigningStudent.id)
+        ? currentMembers
+        : [...currentMembers, assigningStudent.id];
+
+      const updates: any = { teamMembers: updatedMembers };
+      if (asLeader) {
+        updates.teamLeader = assigningStudent.id;
+      }
+
+      await updateProject(selectedProjectId, updates);
+      const updatedRecords = await fetchStudentRecords();
+      setRecords(updatedRecords);
+    }
+
+    setSavingAssign(false);
+    setAssigningStudent(null);
+    setSelectedProjectId("");
+    setAsLeader(false);
   };
 
   if (loading) {
@@ -111,9 +146,26 @@ export default function StudentRecords() {
                       <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
                         Linked Project
                       </span>
-                      <p className="text-xs font-bold text-slate-700 truncate max-w-[180px]">
-                        {project ? project.name : "Unassigned"}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-xs font-bold text-slate-700 truncate max-w-[160px]">
+                          {project ? project.name : "Unassigned"}
+                        </p>
+                        {(currentUser?.role === "coordinator" || currentUser?.role === "master_admin") && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setAssigningStudent(student);
+                              if (project) setSelectedProjectId(project.id);
+                            }}
+                            className="px-2 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 text-[10px] font-bold rounded-lg border border-blue-200 flex items-center gap-1 transition"
+                            title="Assign or reassign project"
+                          >
+                            <FolderPlus className="w-3 h-3 text-blue-600" />
+                            {project ? "Change" : "Assign"}
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     <div className="text-left md:text-right space-y-1">
@@ -302,6 +354,79 @@ export default function StudentRecords() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Quick Project Assignment Modal */}
+      {assigningStudent && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="max-w-md w-full glass-card p-6 border border-blue-200/40 shadow-2xl space-y-4 text-left">
+            <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+              <div>
+                <h3 className="text-base font-bold text-slate-800">Assign Student to Project</h3>
+                <p className="text-xs text-slate-500 font-medium">
+                  {assigningStudent.name} ({assigningStudent.department})
+                </p>
+              </div>
+              <button
+                onClick={() => setAssigningStudent(null)}
+                className="text-slate-400 hover:text-slate-600 font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleAssignSubmit} className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                  Select Project Workspace
+                </label>
+                <select
+                  required
+                  value={selectedProjectId}
+                  onChange={(e) => setSelectedProjectId(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl glass-input text-xs font-semibold cursor-pointer bg-white text-slate-800"
+                >
+                  <option value="">-- Choose Project Workspace --</option>
+                  {projects.map((p) => (
+                    <option key={p.id || p._id} value={p.id || p._id}>
+                      {p.name} ({p.department})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2 p-3 bg-amber-50/70 border border-amber-200/60 rounded-xl">
+                <input
+                  type="checkbox"
+                  id="asLeaderCheck"
+                  checked={asLeader}
+                  onChange={(e) => setAsLeader(e.target.checked)}
+                  className="w-4 h-4 text-amber-600 rounded cursor-pointer accent-amber-600"
+                />
+                <label htmlFor="asLeaderCheck" className="text-xs font-bold text-amber-900 cursor-pointer flex items-center gap-1.5">
+                  <Crown className="w-3.5 h-3.5 text-amber-600" /> Set {assigningStudent.name} as Team Leader
+                </label>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setAssigningStudent(null)}
+                  className="flex-1 py-2.5 px-4 bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-800 rounded-xl text-xs font-semibold transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingAssign || !selectedProjectId}
+                  className="flex-1 py-2.5 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-semibold transition shadow-lg shadow-blue-500/10 disabled:opacity-50"
+                >
+                  {savingAssign ? "Saving..." : "Confirm Assignment"}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>

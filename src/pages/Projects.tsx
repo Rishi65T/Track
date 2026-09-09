@@ -1,31 +1,40 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useStore, ProjectInfo } from "../store.ts";
+import { useStore, ProjectInfo, UserInfo, API_BASE } from "../store.ts";
+import { StudentSelector } from "../components/StudentSelector.tsx";
 import { Plus, Search, Folder, Users, ChevronRight, TrendingUp } from "lucide-react";
 
 export default function Projects() {
-  const { projects, fetchProjects, createProject, currentUser } = useStore();
+  const { projects, fetchProjects, createProject, fetchApprovedStudents, currentUser } = useStore();
 
   const [search, setSearch] = React.useState("");
   const [deptFilter, setDeptFilter] = React.useState("All");
   const [showCreateModal, setShowCreateModal] = React.useState(false);
   const [newTitle, setNewTitle] = React.useState("");
   const [newDept, setNewDept] = React.useState("Computer Science");
+  const [students, setStudents] = React.useState<UserInfo[]>([]);
+  const [newLeaderId, setNewLeaderId] = React.useState("");
+  const [newMemberIds, setNewMemberIds] = React.useState<string[]>([]);
   const [submitting, setSubmitting] = React.useState(false);
 
   React.useEffect(() => {
     fetchProjects();
-  }, [fetchProjects]);
+    fetchApprovedStudents().then((data) => {
+      if (Array.isArray(data)) setStudents(data);
+    });
+  }, [fetchProjects, fetchApprovedStudents]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim()) return;
     setSubmitting(true);
-    const proj = await createProject(newTitle, newDept);
+    const proj = await createProject(newTitle, newDept, undefined, undefined, newLeaderId, newMemberIds);
     setSubmitting(false);
     if (proj) {
       setShowCreateModal(false);
       setNewTitle("");
+      setNewLeaderId("");
+      setNewMemberIds([]);
     }
   };
 
@@ -171,13 +180,18 @@ export default function Projects() {
 
       {/* Workspace Creation Dialog Modal (Coordinator only) */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="max-w-md w-full glass-card p-6 border border-blue-200/40 shadow-xl space-y-5">
-            <h3 className="text-lg font-bold text-slate-800">Create New Workspace</h3>
-            <form onSubmit={handleCreate} className="space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
+          <div className="max-w-xl w-full glass-card p-6 border border-blue-200/40 shadow-2xl space-y-5 my-8 max-h-[90vh] overflow-y-auto">
+            <div className="border-b border-slate-100 pb-3">
+              <h3 className="text-lg font-bold text-slate-800">Create New Project Workspace</h3>
+              <p className="text-xs text-slate-500 font-medium mt-0.5">
+                Set up workspace title, department, and assign initial student team from student records.
+              </p>
+            </div>
+            <form onSubmit={handleCreate} className="space-y-5">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                  Project Title
+                  Project Title <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -185,7 +199,7 @@ export default function Projects() {
                   placeholder="e.g. Automated Soil Classification using CNNs"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl glass-input text-sm"
+                  className="w-full px-4 py-2.5 rounded-xl glass-input text-sm text-slate-800"
                 />
               </div>
 
@@ -196,7 +210,7 @@ export default function Projects() {
                 <select
                   value={newDept}
                   onChange={(e) => setNewDept(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl glass-input text-sm cursor-pointer"
+                  className="w-full px-4 py-2.5 rounded-xl glass-input text-sm cursor-pointer text-slate-800 bg-white"
                 >
                   {departments.map((d) => (
                     <option key={d} value={d} className="bg-white">
@@ -206,7 +220,18 @@ export default function Projects() {
                 </select>
               </div>
 
-              <div className="flex gap-3 pt-3">
+              {/* Student Record Selector for Leader and Members */}
+              <div className="pt-2 border-t border-slate-100">
+                <StudentSelector
+                  students={students}
+                  selectedLeaderId={newLeaderId}
+                  onLeaderChange={setNewLeaderId}
+                  selectedMemberIds={newMemberIds}
+                  onMembersChange={setNewMemberIds}
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}

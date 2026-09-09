@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useStore, ProjectInfo, UserInfo, API_BASE } from "../store.ts";
+import { StudentSelector } from "../components/StudentSelector.tsx";
 import {
   FileText,
   Upload,
@@ -80,7 +81,7 @@ export default function ProjectDetails() {
 
   // Coordinator editable fields
   const [teamLeader, setTeamLeader] = React.useState("");
-  const [teamMembersInput, setTeamMembersInput] = React.useState("");
+  const [teamMemberIds, setTeamMemberIds] = React.useState<string[]>([]);
   const [status, setStatus] = React.useState<ProjectInfo["status"]>("Active");
   const [progress, setProgress] = React.useState(0);
   const [savingDoc, setSavingDoc] = React.useState(false);
@@ -108,7 +109,7 @@ export default function ProjectDetails() {
 
       // Coordinator fields
       setTeamLeader(p.teamLeader || "");
-      setTeamMembersInput(p.teamMembers ? p.teamMembers.join(", ") : "");
+      setTeamMemberIds(p.teamMembers || []);
       setStatus(p.status || "Active");
       setProgress(p.progress || 0);
 
@@ -232,7 +233,7 @@ export default function ProjectDetails() {
     } else {
       success = await updateProject(currentProjectId, {
         teamLeader,
-        teamMembers: teamMembersInput.split(",").map((s) => s.trim()).filter(Boolean),
+        teamMembers: teamMemberIds,
         status,
         progress,
         githubRepo,
@@ -376,11 +377,24 @@ export default function ProjectDetails() {
             {project.name}
           </h2>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 mt-1 font-semibold">
-            <span>Mentor: {project.mentorName || "Unassigned"}</span>
-            <span>&bull;</span>
-            <span>Leader: {project.teamLeader || "None"}</span>
-            <span>&bull;</span>
-            <span>Members: {project.teamMembers.join(", ") || "None"}</span>
+            {(() => {
+              const findStudentName = (idStr: string) => {
+                const found = students.find((s) => (s.userId === idStr || s.id === idStr || s._id === idStr));
+                return found ? found.name : idStr;
+              };
+              const leaderDisplay = project.teamLeader ? findStudentName(project.teamLeader) : "None";
+              const membersDisplay = project.teamMembers && project.teamMembers.length > 0
+                ? project.teamMembers.map(findStudentName).join(", ")
+                : "None";
+
+              return (
+                <>
+                  <span>Leader: <strong className="text-slate-700 font-bold">{leaderDisplay}</strong></span>
+                  <span>&bull;</span>
+                  <span>Members: <strong className="text-slate-700 font-bold">{membersDisplay}</strong></span>
+                </>
+              );
+            })()}
             {project.githubRepo && (
               <>
                 <span>&bull;</span>
@@ -608,38 +622,13 @@ export default function ProjectDetails() {
               ) : (
                 // Coordinator view: inputs to assign team members, update progress & status
                 <div className="space-y-5 text-left">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                        Team Leader ID
-                      </label>
-                      <select
-                        value={teamLeader}
-                        onChange={(e) => setTeamLeader(e.target.value)}
-                        className="w-full px-4 py-2.5 rounded-xl glass-input text-xs cursor-pointer"
-                      >
-                        <option value="">Choose Leader</option>
-                        {students.map((s) => (
-                          <option key={s.userId} value={s.userId} className="bg-white">
-                            {s.name} ({s.userId})
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="space-y-1">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
-                        Team Members (Comma separated User IDs)
-                      </label>
-                      <input
-                        type="text"
-                        value={teamMembersInput}
-                        onChange={(e) => setTeamMembersInput(e.target.value)}
-                        className="w-full px-4 py-2.5 rounded-xl glass-input text-xs"
-                        placeholder="student-123, student-456"
-                      />
-                    </div>
-                  </div>
+                  <StudentSelector
+                    students={students}
+                    selectedLeaderId={teamLeader}
+                    onLeaderChange={setTeamLeader}
+                    selectedMemberIds={teamMemberIds}
+                    onMembersChange={setTeamMemberIds}
+                  />
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="space-y-1">
