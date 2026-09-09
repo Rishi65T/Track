@@ -115,8 +115,8 @@ export default function OpportunityDetails() {
     .filter(o => o.category === opp.category && (o.id !== opp.id && o._id !== opp._id))
     .slice(0, 3);
 
-  // Mock FAQs
-  const mockFaqs = [
+  // Event FAQs
+  const eventFaqs = [
     { q: "Who is eligible to participate?", a: opp.eligibility || "Open to all undergraduate and graduate college students globally." },
     { q: "Is there any registration fee?", a: opp.freeOrPaid === "Free" ? "No, registration for this opportunity is completely free." : "Yes, there is a fee. Please check the official portal link for payment details." },
     { q: "How do I register for the event?", a: "Click the 'Register Now / Apply Now' button. It will record your interest in our Lab system and provide you the link to submit your profile on the official organizer website." }
@@ -309,7 +309,7 @@ export default function OpportunityDetails() {
               Frequently Asked Questions (FAQs)
             </h3>
             <div className="space-y-2">
-              {mockFaqs.map((faq, index) => (
+              {eventFaqs.map((faq, index) => (
                 <div
                   key={index}
                   className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm"
