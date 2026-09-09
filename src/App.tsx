@@ -60,7 +60,7 @@ export default function App() {
     return (
       <BrowserRouter>
         <div className="min-h-screen flex items-center justify-center bg-[#f1f5f9] p-4 text-left">
-          <div className="max-w-md w-full glass-card p-8 border border-blue-200/50 shadow-2xl text-center space-y-6 bg-white/90 backdrop-blur-xl rounded-3xl">
+          <div className="w-[94vw] sm:max-w-md glass-card p-5 sm:p-8 border border-blue-200/50 shadow-2xl text-center space-y-5 bg-white/90 backdrop-blur-xl rounded-3xl">
             <div className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 border border-blue-200/60 flex items-center justify-center mx-auto shadow-sm">
               <AlertCircle className="w-8 h-8 animate-pulse text-blue-600" />
             </div>

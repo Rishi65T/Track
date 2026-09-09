@@ -138,10 +138,10 @@ export default function Projects() {
 
       {/* Project Cards Grid */}
       {filteredProjects.length === 0 ? (
-        <div className="glass-card p-12 text-center border border-blue-200/40 max-w-xl mx-auto space-y-3 shadow-sm">
-          <Folder className="w-10 h-10 text-slate-400 mx-auto" />
-          <h3 className="text-base font-bold text-slate-800">No Workspaces Found</h3>
-          <p className="text-sm text-slate-500">
+        <div className="glass-card p-5 sm:p-8 text-center border border-blue-200/40 max-w-xl mx-auto space-y-3 shadow-sm">
+          <Folder className="w-8 h-8 sm:w-10 sm:h-10 text-slate-400 mx-auto" />
+          <h3 className="text-sm sm:text-base font-bold text-slate-800">No Workspaces Found</h3>
+          <p className="text-xs sm:text-sm text-slate-500">
             No projects matched the search criteria. Click &quot;Create Workspace&quot; to start a new project.
           </p>
         </div>

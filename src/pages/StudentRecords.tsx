@@ -104,10 +104,10 @@ export default function StudentRecords() {
       </div>
 
       {records.length === 0 ? (
-        <div className="glass-card p-12 text-center border border-blue-200/40 max-w-xl mx-auto space-y-3">
-          <Users className="w-10 h-10 text-slate-400 mx-auto" />
-          <h3 className="text-base font-bold text-slate-800">No Student Records Found</h3>
-          <p className="text-sm text-slate-500">
+        <div className="glass-card p-5 sm:p-8 text-center border border-blue-200/40 max-w-xl mx-auto space-y-3">
+          <Users className="w-8 h-8 sm:w-10 sm:h-10 text-slate-400 mx-auto" />
+          <h3 className="text-sm sm:text-base font-bold text-slate-800">No Student Records Found</h3>
+          <p className="text-xs sm:text-sm text-slate-500">
             Once students register and are approved by the coordinator, they will appear here.
           </p>
         </div>

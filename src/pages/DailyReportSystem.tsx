@@ -223,7 +223,7 @@ export default function DailyReportSystem() {
 
       {/* Main Content Area */}
       {activeTab === "submit" && currentUser?.role === "student" ? (
-        <div className="glass-card p-8 border border-slate-200 space-y-6">
+        <div className="glass-card p-4 sm:p-6 md:p-8 border border-slate-200 space-y-4 sm:space-y-6">
           <div className="border-b pb-4">
             <h2 className="text-lg font-bold text-slate-800">Daily Project Status Form</h2>
             <p className="text-xs text-slate-500">Date: {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>

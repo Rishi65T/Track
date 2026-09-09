@@ -208,7 +208,7 @@ export default function Opportunities() {
       </div>
 
       {/* Hero Section */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-slate-900 dark:to-indigo-950 p-8 md:p-12 text-white shadow-xl">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-slate-900 dark:to-indigo-950 p-5 sm:p-8 md:p-12 text-white shadow-xl">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.12),transparent)]" />
         <div className="relative z-10 max-w-3xl space-y-6">
           <motion.div
@@ -322,7 +322,7 @@ export default function Opportunities() {
       </div>
 
       {/* Main Panel & Grid Layout */}
-      <div id="opportunities-grid" className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+      <div id="opportunities-grid" className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 items-start">
         
         {/* Left column Search, Filter Controls & Recommendations */}
         <div className="lg:col-span-1 space-y-6">

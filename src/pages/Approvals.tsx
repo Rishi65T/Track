@@ -45,12 +45,12 @@ export default function Approvals() {
       </div>
 
       {requests.length === 0 ? (
-        <div className="glass-card p-12 text-center border border-blue-200/40 max-w-xl mx-auto space-y-4 shadow-sm">
-          <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mx-auto text-blue-600 border border-blue-200/50">
-            <Clock className="w-6 h-6 animate-pulse" />
+        <div className="glass-card p-5 sm:p-8 text-center border border-blue-200/40 max-w-xl mx-auto space-y-4 shadow-sm">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-50 flex items-center justify-center mx-auto text-blue-600 border border-blue-200/50">
+            <Clock className="w-5 h-5 sm:w-6 sm:h-6 animate-pulse" />
           </div>
-          <h3 className="text-base font-bold text-slate-800">All Caught Up!</h3>
-          <p className="text-sm text-slate-500">
+          <h3 className="text-sm sm:text-base font-bold text-slate-800">All Caught Up!</h3>
+          <p className="text-xs sm:text-sm text-slate-500">
             There are currently no student registration requests pending coordinator review.
           </p>
         </div>

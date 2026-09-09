@@ -593,7 +593,7 @@ export default function Attendance() {
 
           {/* Student Sheet Grid */}
           {filteredAttendanceStudents.length === 0 ? (
-            <div className="glass-card p-12 text-center border border-blue-200/40">
+            <div className="glass-card p-5 sm:p-8 text-center border border-blue-200/40">
               <Filter className="w-8 h-8 text-slate-400 mx-auto mb-3" />
               <p className="text-sm font-semibold text-slate-500">No students match your filter criteria.</p>
             </div>
@@ -729,7 +729,7 @@ export default function Attendance() {
             </div>
 
             {filteredLabLogs.length === 0 ? (
-              <div className="glass-card p-12 text-center border border-dashed border-slate-200">
+              <div className="glass-card p-5 sm:p-8 text-center border border-dashed border-slate-200">
                 <Clock className="w-10 h-10 text-slate-400 mx-auto mb-3" />
                 <h4 className="text-sm font-bold text-slate-700">Lab is Currently Empty</h4>
                 <p className="text-xs text-slate-500 mt-1 font-semibold">No students are currently logged in to this workspace.</p>

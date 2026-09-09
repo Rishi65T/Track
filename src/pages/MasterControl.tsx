@@ -93,7 +93,7 @@ export default function MasterControl() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[600px]">
+      <div className="flex items-center justify-center min-h-[280px] sm:min-h-[450px]">
         <div className="flex items-center gap-3 text-slate-600 font-semibold text-sm">
           <div className="w-5 h-5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
           Loading Master Control Live Directory...

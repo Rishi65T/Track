@@ -212,10 +212,10 @@ export default function ProjectDetails() {
 
   if (!currentProjectId || !project) {
     return (
-      <div className="glass-card p-12 text-center border border-slate-200/60 max-w-xl mx-auto space-y-4">
-        <Users className="w-10 h-10 text-blue-500 mx-auto" />
-        <h3 className="text-base font-bold text-slate-800">No Project Workspace Linked</h3>
-        <p className="text-sm text-slate-500">
+      <div className="glass-card p-5 sm:p-8 text-center border border-slate-200/60 max-w-xl mx-auto space-y-4">
+        <Users className="w-8 h-8 sm:w-10 sm:h-10 text-blue-500 mx-auto" />
+        <h3 className="text-sm sm:text-base font-bold text-slate-800">No Project Workspace Linked</h3>
+        <p className="text-xs sm:text-sm text-slate-500">
           Coordinators must assign you to a project workspace before you can edit project metrics.
         </p>
       </div>
