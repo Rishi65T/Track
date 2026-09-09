@@ -456,7 +456,7 @@ async function startServer() {
           try {
             const mongoDocs = await mongoose.connection.db.collection(this.collectionName).find(filter || {}).toArray();
             for (const doc of mongoDocs) {
-              results.push(this.formatDoc(doc._id, doc));
+              results.push(this.formatDoc(doc._id.toString(), doc));
             }
             return results;
           } catch (mErr) {
@@ -490,7 +490,7 @@ async function startServer() {
       if (mongoose.connection.readyState === 1 && mongoose.connection.db) {
         try {
           const doc = await mongoose.connection.db.collection(this.collectionName).findOne(filter || {});
-          if (doc) return this.formatDoc(doc._id, doc);
+          if (doc) return this.formatDoc(doc._id.toString(), doc);
         } catch (e) {}
       }
       const results = await this.find(filter);
@@ -501,8 +501,8 @@ async function startServer() {
       if (!id) return null;
       if (mongoose.connection.readyState === 1 && mongoose.connection.db) {
         try {
-          const doc = await mongoose.connection.db.collection(this.collectionName).findOne({ _id: id });
-          if (doc) return this.formatDoc(doc._id, doc);
+          const doc = await mongoose.connection.db.collection(this.collectionName).findOne({ _id: id } as any);
+          if (doc) return this.formatDoc(doc._id.toString(), doc);
         } catch (e) {}
       } else if (firestoreDb) {
         try {

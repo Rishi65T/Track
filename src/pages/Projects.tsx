@@ -2,10 +2,31 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useStore, ProjectInfo, UserInfo, API_BASE } from "../store.ts";
 import { StudentSelector } from "../components/StudentSelector.tsx";
-import { Plus, Search, Folder, Users, ChevronRight, TrendingUp } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Folder,
+  Users,
+  ChevronRight,
+  TrendingUp,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  ShieldCheck,
+  UserCheck,
+  User,
+} from "lucide-react";
 
 export default function Projects() {
-  const { projects, fetchProjects, createProject, fetchApprovedStudents, currentUser } = useStore();
+  const {
+    projects,
+    fetchProjects,
+    createProject,
+    fetchApprovedStudents,
+    currentUser,
+    approveProjectMilestone,
+    respondProjectExtension,
+  } = useStore();
 
   const [search, setSearch] = React.useState("");
   const [deptFilter, setDeptFilter] = React.useState("All");
@@ -46,6 +67,18 @@ export default function Projects() {
     "Mechanical Engineering",
     "Civil Engineering",
   ];
+
+  const findStudentDetails = (idOrName: string) => {
+    if (!idOrName) return "";
+    const found = students.find(
+      (s) => s.userId === idOrName || (s as any).id === idOrName || (s as any)._id === idOrName || s.name === idOrName
+    );
+    if (found) {
+      const reg = found.registerNumber || (found as any).rollNo || found.userId;
+      return `${found.name}${reg ? ` (${reg})` : ""}`;
+    }
+    return idOrName;
+  };
 
   const filteredProjects = projects.filter((p) => {
     const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase());
@@ -115,10 +148,9 @@ export default function Projects() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredProjects.map((project) => (
-            <Link
+            <div
               key={project.id || project._id}
-              to={`/projects/${project.id || project._id}`}
-              className="glass-card p-5 border border-blue-200/35 flex flex-col justify-between hover:scale-[1.01] hover:shadow-xl hover:shadow-blue-500/5 group text-left"
+              className="glass-card p-5 border border-blue-200/35 flex flex-col justify-between hover:shadow-xl hover:shadow-blue-500/5 group text-left transition-all duration-300"
             >
               <div>
                 <div className="flex justify-between items-start mb-3">
@@ -129,51 +161,169 @@ export default function Projects() {
                     className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold ${
                       (project.status as string) === "Active"
                         ? "bg-emerald-50 text-emerald-700 border border-emerald-200/60"
-                        : (project.status as string) === "At Risk" || (project.status as string) === "On Hold"
-                        ? "bg-rose-50 text-rose-700 border border-rose-200/60"
+                        : (project.status as string) === "At Risk" || (project.status as string) === "On Hold" || (project.status as string) === "MILESTONE_REVIEW_REQUIRED"
+                        ? "bg-amber-50 text-amber-700 border border-amber-200/60"
                         : "bg-blue-50 text-blue-700 border border-blue-200/60"
                     }`}
                   >
-                    {project.status}
+                    {project.status === "MILESTONE_REVIEW_REQUIRED" ? "Review Pending" : project.status}
                   </span>
                 </div>
-                <h3 className="font-bold text-slate-800 text-base group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
-                  {project.name}
-                </h3>
-                <p className="text-xs text-slate-500 mt-2 line-clamp-3 leading-relaxed font-semibold">
+
+                <Link to={`/projects/${project.id || project._id}`}>
+                  <h3 className="font-bold text-slate-800 text-base group-hover:text-blue-600 transition-colors line-clamp-2 leading-snug">
+                    {project.name}
+                  </h3>
+                </Link>
+                <p className="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed font-medium">
                   {project.abstract || "Workspace setup completed. Detailed documentation is pending."}
                 </p>
+
+                {/* Team Members & Leader Info (With Register Numbers) */}
+                <div className="mt-4 pt-3 border-t border-slate-100 space-y-2">
+                  {/* Leader */}
+                  <div className="flex items-center gap-1.5 text-xs text-slate-700 font-semibold">
+                    <UserCheck className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                    <span className="text-slate-400 text-[11px]">Leader:</span>
+                    <span className="font-bold text-slate-800 text-[11px] truncate">
+                      {project.teamLeader ? findStudentDetails(project.teamLeader) : "Unassigned"}
+                    </span>
+                  </div>
+
+                  {/* Members */}
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-semibold">
+                      <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                      <span>Members ({project.teamMembers ? project.teamMembers.length : 0}/5):</span>
+                    </div>
+                    {project.teamMembers && project.teamMembers.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {project.teamMembers.map((mId, idx) => (
+                          <span
+                            key={idx}
+                            className="inline-block bg-slate-100 text-slate-700 text-[10px] font-semibold px-2 py-0.5 rounded border border-slate-200/60"
+                          >
+                            {findStudentDetails(mId)}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-[10px] text-slate-400 italic">No members assigned</span>
+                    )}
+                  </div>
+                </div>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-slate-200/60 space-y-4">
-                {/* Progress bar (coordinator only) */}
-                {currentUser?.role === "coordinator" && (
+              <div className="mt-5 pt-4 border-t border-slate-200/60 space-y-3">
+                {/* Progress bar (coordinator / admin) */}
+                {(currentUser?.role === "coordinator" || currentUser?.role === "master_admin") && (
                   <div className="space-y-1">
                     <div className="flex justify-between text-[11px] text-slate-500 font-bold">
-                      <span>Work Completed</span>
+                      <span>Progress</span>
                       <span className="font-bold text-slate-800">{project.progress}%</span>
                     </div>
                     <div className="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
                       <div
-                        className="bg-blue-600 h-full rounded-full"
+                        className="bg-blue-600 h-full rounded-full transition-all duration-300"
                         style={{ width: `${project.progress}%` }}
                       />
                     </div>
                   </div>
                 )}
 
-                <div className="flex items-center justify-between text-xs text-slate-500">
-                  <div className="flex items-center gap-1 font-semibold">
-                    <Users className="w-3.5 h-3.5 text-slate-400" />
-                    <span>{project.teamMembers.length} / 5 Members</span>
+                {/* Inline Approvals Section (Coordinator / Master Admin) */}
+                {(currentUser?.role === "coordinator" || currentUser?.role === "master_admin") && (
+                  <div className="space-y-2 pt-1">
+                    {/* Time Extension Approval Banner */}
+                    {(project as any).extensionStatus === "PENDING" && (
+                      <div className="bg-amber-50 border border-amber-200 p-2.5 rounded-xl space-y-2 text-xs">
+                        <div className="flex items-center justify-between text-amber-900 font-bold text-[11px]">
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5 text-amber-600" />
+                            Extension Request: +{(project as any).requestedExtensionDays || 14} Days
+                          </span>
+                        </div>
+                        {(project as any).extensionReason && (
+                          <p className="text-[10px] text-amber-700 italic">
+                            &quot;{(project as any).extensionReason}&quot;
+                          </p>
+                        )}
+                        <div className="flex gap-2">
+                          <button
+                            onClick={async (e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              await respondProjectExtension(project.id || project._id!, true);
+                            }}
+                            className="flex-1 py-1 px-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-[10px] flex items-center justify-center gap-1 transition shadow-sm"
+                          >
+                            <CheckCircle2 className="w-3 h-3" /> Approve
+                          </button>
+                          <button
+                            onClick={async (e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              await respondProjectExtension(project.id || project._id!, false);
+                            }}
+                            className="py-1 px-2.5 bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold rounded-lg text-[10px] flex items-center justify-center gap-1 transition"
+                          >
+                            <XCircle className="w-3 h-3" /> Reject
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Milestone Progression Approval Button */}
+                    {(project.status === "MILESTONE_REVIEW_REQUIRED" ||
+                      (project.progress >= (project.maxAllowedProgress || 25) && (project.maxAllowedProgress || 25) < 100)) && (
+                      <div className="bg-blue-50/90 border border-blue-200 p-2.5 rounded-xl space-y-1.5 text-xs">
+                        <div className="flex items-center justify-between font-bold text-blue-900 text-[11px]">
+                          <span className="flex items-center gap-1">
+                            <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                            Milestone Approval ({project.maxAllowedProgress || 25}% Review)
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-blue-700 leading-tight">
+                          Progress locked at {project.maxAllowedProgress || 25}%. Review student presentation and approve.
+                        </p>
+                        <button
+                          onClick={async (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const nextMilestone =
+                              (project.maxAllowedProgress || 25) === 25
+                                ? 50
+                                : (project.maxAllowedProgress || 25) === 50
+                                ? 75
+                                : 100;
+                            await approveProjectMilestone(project.id || project._id!, nextMilestone);
+                          }}
+                          className="w-full py-1.5 px-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg text-[10px] flex items-center justify-center gap-1.5 shadow-sm transition"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          Approve {project.maxAllowedProgress || 25}% Review &amp; Unlock {
+                            (project.maxAllowedProgress || 25) === 25 ? 50 : (project.maxAllowedProgress || 25) === 50 ? 75 : 100
+                          }%
+                        </button>
+                      </div>
+                    )}
                   </div>
-                  <span className="flex items-center gap-1 group-hover:text-blue-600 font-bold transition-colors">
-                    Workspace Hub
-                    <ChevronRight className="w-3.5 h-3.5" />
+                )}
+
+                <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
+                  <span className="text-[10px] text-slate-400 font-semibold">
+                    Workspace #{project.id ? project.id.slice(-6) : "NEW"}
                   </span>
+                  <Link
+                    to={`/projects/${project.id || project._id}`}
+                    className="flex items-center gap-1 text-blue-600 hover:text-blue-800 font-bold transition-colors text-xs"
+                  >
+                    Open Workspace Hub
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </Link>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}

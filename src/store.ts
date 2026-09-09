@@ -74,7 +74,7 @@ export interface ProjectInfo {
   teamMembers: string[];
   teamLeader: string;
   progress: number;
-  status: "Not Started" | "Planning" | "Development" | "Testing" | "Completed" | "On Hold" | "Active";
+  status: "Not Started" | "Planning" | "Development" | "Testing" | "Completed" | "On Hold" | "Active" | "MILESTONE_REVIEW_REQUIRED" | "EXPIRED";
   files: FileData[];
   githubRepo?: string;
   maxAllowedProgress?: number;
