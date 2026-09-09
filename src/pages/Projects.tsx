@@ -330,8 +330,8 @@ export default function Projects() {
 
       {/* Workspace Creation Dialog Modal (Coordinator only) */}
       {showCreateModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
-          <div className="max-w-xl w-full glass-card p-6 border border-blue-200/40 shadow-2xl space-y-5 my-8 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-sm overflow-y-auto">
+          <div className="w-[94vw] sm:max-w-xl glass-card p-4 sm:p-6 border border-blue-200/40 shadow-2xl space-y-4 my-auto max-h-[85vh] overflow-y-auto">
             <div className="border-b border-slate-100 pb-3">
               <h3 className="text-lg font-bold text-slate-800">Create New Project Workspace</h3>
               <p className="text-xs text-slate-500 font-medium mt-0.5">

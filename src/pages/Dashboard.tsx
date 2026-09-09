@@ -212,32 +212,32 @@ export default function Dashboard() {
     ];
 
     return (
-      <div className="space-y-6 text-left">
+      <div className="space-y-4 sm:space-y-6 text-left">
         <div>
-          <h2 className="text-xl font-bold text-slate-800 tracking-tight">Coordinator Admin Panel</h2>
-          <p className="text-sm text-slate-500">
+          <h2 className="text-lg sm:text-xl font-bold text-slate-800 tracking-tight">Coordinator Admin Panel</h2>
+          <p className="text-xs sm:text-sm text-slate-500">
             Overview of department activities, pending actions, and student sprint analytics.
           </p>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 perspective-1000">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-5 perspective-1000">
           {cards.map((card) => {
             const Icon = card.icon;
             return (
               <Link
                 key={card.title}
                 to={card.link}
-                className={`glass-card card-hyper-3d shine-effect p-5 border flex items-center justify-between transition-all ${card.bg}`}
+                className={`glass-card card-hyper-3d shine-effect p-3.5 sm:p-5 border flex items-center justify-between transition-all ${card.bg}`}
               >
-                <div className="space-y-1 text-left pop-out-3d">
-                  <span className="text-xs text-slate-500 font-bold uppercase tracking-wider block">
+                <div className="space-y-0.5 sm:space-y-1 text-left pop-out-3d min-w-0">
+                  <span className="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-wider block truncate">
                     {card.title}
                   </span>
-                  <span className="text-2xl font-extrabold text-slate-800 block">{card.value}</span>
+                  <span className="text-lg sm:text-2xl font-extrabold text-slate-800 block">{card.value}</span>
                 </div>
-                <div className={`p-3 rounded-2xl bg-white/90 border border-slate-200/80 ${card.color} shadow-lg pop-out-3d-deep transform hover:scale-110 transition-transform`}>
-                  <Icon className="w-6 h-6" />
+                <div className={`p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-white/90 border border-slate-200/80 ${card.color} shadow-lg pop-out-3d-deep transform hover:scale-110 transition-transform shrink-0`}>
+                  <Icon className="w-4 h-4 sm:w-6 sm:h-6" />
                 </div>
               </Link>
             );

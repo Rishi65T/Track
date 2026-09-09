@@ -31,18 +31,18 @@ export default function Header({ onMenuToggle }: HeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between px-6 h-20 glass-panel border-b border-slate-200/60">
+    <header className="sticky top-0 z-30 flex items-center justify-between px-3 sm:px-6 h-16 sm:h-20 glass-panel border-b border-slate-200/60">
       {/* Title & Hamburger */}
-      <div className="flex items-center gap-3 sm:gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         <button
           onClick={onMenuToggle}
-          className="p-2.5 text-slate-500 hover:text-slate-800 rounded-xl md:hidden hover:bg-slate-100 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer"
+          className="p-2 text-slate-500 hover:text-slate-800 rounded-xl md:hidden hover:bg-slate-100 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer"
           aria-label="Toggle navigation menu"
         >
-          <Menu className="w-6 h-6" />
+          <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
         </button>
         <div className="text-left">
-          <h2 className="text-lg sm:text-xl font-bold text-slate-800 tracking-tight leading-snug">{getPageTitle()}</h2>
+          <h2 className="text-base sm:text-xl font-bold text-slate-800 tracking-tight leading-snug truncate max-w-[200px] sm:max-w-none">{getPageTitle()}</h2>
           <p className="text-xs text-slate-500 hidden sm:block">
             {currentUser?.role === "coordinator" ? "Coordinator Control Center" : "Student Workspaces"}
           </p>
@@ -50,11 +50,11 @@ export default function Header({ onMenuToggle }: HeaderProps) {
       </div>
 
       {/* Notifications Alert Bell & User profile */}
-      <div className="flex items-center gap-3 sm:gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         <div className="relative">
           <button
             onClick={() => setShowNotifs(!showNotifs)}
-            className={`p-2.5 rounded-xl border border-slate-200 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer ${
+            className={`p-2 sm:p-2.5 rounded-xl border border-slate-200 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer ${
               unreadNotifications.length > 0
                 ? "bg-blue-50 text-blue-600 border-blue-200/50"
                 : "text-slate-500 hover:text-slate-800 hover:bg-slate-100"
@@ -74,7 +74,7 @@ export default function Header({ onMenuToggle }: HeaderProps) {
                 className="fixed inset-0 z-40"
                 onClick={() => setShowNotifs(false)}
               />
-              <div className="absolute right-0 mt-3 z-50 w-80 rounded-2xl glass-panel border border-slate-200/80 p-4 shadow-xl">
+              <div className="absolute right-0 mt-3 z-50 w-[calc(100vw-1.5rem)] sm:w-80 rounded-2xl glass-panel border border-slate-200/80 p-3.5 sm:p-4 shadow-xl">
                 <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-200/60">
                   <h3 className="font-bold text-sm text-slate-800">Notifications</h3>
                   <span className="text-xs text-blue-600 font-bold">
