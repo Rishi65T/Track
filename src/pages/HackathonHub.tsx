@@ -505,11 +505,11 @@ export default function HackathonHub() {
 
       {/* Upload Proof Screenshot Modal */}
       {selectedHackathon && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-5 border border-slate-200 shadow-2xl">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 space-y-5 border border-slate-200 shadow-2xl max-h-[85vh] overflow-y-auto my-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <h3 className="font-bold text-slate-800 text-base">Upload Registration Screenshot Proof</h3>
-              <button onClick={() => setSelectedHackathon(null)} className="text-slate-400 hover:text-slate-600">
+              <button onClick={() => setSelectedHackathon(null)} className="text-slate-400 hover:text-slate-600 p-1">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -532,8 +532,8 @@ export default function HackathonHub() {
               </div>
 
               {screenshotPreview && (
-                <div className="relative rounded-xl overflow-hidden border border-slate-200 max-h-48">
-                  <img src={screenshotPreview} alt="Proof Preview" className="w-full h-full object-cover" />
+                <div className="relative rounded-xl overflow-hidden border border-slate-200 max-h-48 sm:max-h-56 bg-slate-50 flex items-center justify-center">
+                  <img src={screenshotPreview} alt="Proof Preview" className="max-h-48 sm:max-h-56 w-auto object-contain" />
                 </div>
               )}
 

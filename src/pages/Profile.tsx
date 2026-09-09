@@ -75,7 +75,7 @@ export default function Profile() {
     setSaving(true);
 
     if (githubUsername && githubUsername.trim().includes("@")) {
-      addToast("Please enter a valid GitHub username (e.g. octocat) or repository URL (e.g. https://github.com/owner/repo). Email addresses are not valid GitHub URLs.", "error");
+      addToast("Please enter a valid GitHub username (e.g. octocat) or URL, not an email address.", "error");
       setSaving(false);
       return;
     }

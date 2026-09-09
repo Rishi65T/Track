@@ -33,15 +33,16 @@ export default function Header({ onMenuToggle }: HeaderProps) {
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between px-6 h-20 glass-panel border-b border-slate-200/60">
       {/* Title & Hamburger */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4">
         <button
           onClick={onMenuToggle}
-          className="p-2 text-slate-500 hover:text-slate-800 rounded-lg md:hidden hover:bg-slate-100"
+          className="p-2.5 text-slate-500 hover:text-slate-800 rounded-xl md:hidden hover:bg-slate-100 min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer"
+          aria-label="Toggle navigation menu"
         >
           <Menu className="w-6 h-6" />
         </button>
         <div className="text-left">
-          <h2 className="text-xl font-bold text-slate-800 tracking-tight">{getPageTitle()}</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-slate-800 tracking-tight leading-snug">{getPageTitle()}</h2>
           <p className="text-xs text-slate-500 hidden sm:block">
             {currentUser?.role === "coordinator" ? "Coordinator Control Center" : "Student Workspaces"}
           </p>
@@ -49,19 +50,20 @@ export default function Header({ onMenuToggle }: HeaderProps) {
       </div>
 
       {/* Notifications Alert Bell & User profile */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4">
         <div className="relative">
           <button
             onClick={() => setShowNotifs(!showNotifs)}
-            className={`p-2.5 rounded-xl border border-slate-200 transition-all ${
+            className={`p-2.5 rounded-xl border border-slate-200 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center cursor-pointer ${
               unreadNotifications.length > 0
                 ? "bg-blue-50 text-blue-600 border-blue-200/50"
                 : "text-slate-500 hover:text-slate-800 hover:bg-slate-100"
             }`}
+            aria-label="Notifications"
           >
             <Bell className="w-5 h-5" />
             {unreadNotifications.length > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white" />
+              <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-rose-500 rounded-full ring-2 ring-white" />
             )}
           </button>
 

@@ -385,10 +385,10 @@ export default function Attendance() {
         </div>
 
         {/* Tab Buttons */}
-        <div className="flex gap-2 p-1 bg-slate-100 border border-slate-200 rounded-xl">
+        <div className="flex items-center gap-1.5 p-1 bg-slate-100 border border-slate-200 rounded-xl overflow-x-auto no-scrollbar max-w-full">
           <button
             onClick={() => setActiveTab("sheet")}
-            className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+            className={`px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
               activeTab === "sheet"
                 ? "bg-white text-blue-600 shadow-sm border border-slate-200"
                 : "text-slate-500 hover:text-slate-800"
@@ -399,7 +399,7 @@ export default function Attendance() {
           </button>
           <button
             onClick={() => setActiveTab("lab")}
-            className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+            className={`px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
               activeTab === "lab"
                 ? "bg-white text-blue-600 shadow-sm border border-slate-200"
                 : "text-slate-500 hover:text-slate-800"
@@ -410,7 +410,7 @@ export default function Attendance() {
           </button>
           <button
             onClick={() => setActiveTab("register")}
-            className={`px-4 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
+            className={`px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
               activeTab === "register"
                 ? "bg-white text-blue-600 shadow-sm border border-slate-200"
                 : "text-slate-500 hover:text-slate-800"

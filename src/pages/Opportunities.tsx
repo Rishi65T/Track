@@ -293,11 +293,11 @@ export default function Opportunities() {
       </div>
 
 
-      {/* Category Selection Filter Bar */}
-      <div className="flex flex-wrap gap-2 pt-2 overflow-x-auto pb-2 border-b border-slate-200/60 dark:border-slate-800">
+      {/* Horizontal Category Selector Pills */}
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 max-w-full">
         <button
           onClick={() => setSelectedCategory("")}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border whitespace-nowrap shrink-0 ${
             selectedCategory === ""
               ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/15"
               : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-950"
@@ -309,7 +309,7 @@ export default function Opportunities() {
           <button
             key={idx}
             onClick={() => setSelectedCategory(cat.name)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border flex items-center gap-1.5 ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all border flex items-center gap-1.5 whitespace-nowrap shrink-0 ${
               selectedCategory === cat.name
                 ? "bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-500/15"
                 : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-950"

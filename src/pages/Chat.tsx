@@ -81,19 +81,19 @@ export default function Chat() {
   const roomInfo = getActiveRoomInfo();
 
   return (
-    <div className="h-[calc(100vh-180px)] flex flex-col md:flex-row gap-5">
+    <div className="h-[calc(100vh-140px)] md:h-[calc(100vh-180px)] flex flex-col md:flex-row gap-4 md:gap-5">
       {/* Discussion Rooms List */}
-      <div className="w-full md:w-72 flex flex-col gap-3">
-        <div className="glass-card p-4 border border-blue-200/40 space-y-4 flex flex-col h-full overflow-hidden text-left">
-          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+      <div className="w-full md:w-72 flex flex-col gap-2 shrink-0">
+        <div className="glass-card p-3 sm:p-4 border border-blue-200/40 space-y-2 md:space-y-4 flex flex-col md:h-full overflow-hidden text-left">
+          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:block">
             Discussion Channels
           </h3>
 
-          <div className="space-y-2 flex-1 overflow-y-auto pr-1">
+          <div className="flex md:flex-col gap-2 overflow-x-auto no-scrollbar md:overflow-y-auto pb-1 md:pb-0 max-w-full">
             {/* Global Room */}
             <button
               onClick={() => setSelectedRoomId("global")}
-              className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold transition-all border ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all border whitespace-nowrap shrink-0 md:w-full ${
                 selectedRoomId === "global"
                   ? "bg-blue-600 text-white border-blue-500 shadow-sm"
                   : "text-slate-600 hover:text-slate-800 bg-slate-50 border-slate-200/50 hover:bg-slate-100/60"
@@ -103,14 +103,8 @@ export default function Chat() {
               <span className="truncate">Global Room</span>
             </button>
 
-            <div className="border-t border-slate-200/60 pt-3 my-3">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block mb-2">
-                {currentUser?.role === "coordinator" ? "Workspace Channels" : "My Workspace"}
-              </span>
-            </div>
-
             {/* Coordinator list of all projects */}
-            {currentUser?.role === "coordinator" ? (
+            {currentUser?.role === "coordinator" || currentUser?.role === "master_admin" ? (
               projects.map((proj) => {
                 const projId = proj._id || proj.id || "";
                 const isSelected = selectedRoomId === projId;
@@ -118,14 +112,14 @@ export default function Chat() {
                   <button
                     key={projId}
                     onClick={() => setSelectedRoomId(projId)}
-                    className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold transition-all border ${
+                    className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all border whitespace-nowrap shrink-0 md:w-full ${
                       isSelected
                         ? "bg-blue-600 text-white border-blue-500 shadow-sm"
                         : "text-slate-600 hover:text-slate-800 bg-slate-50 border-slate-200/50 hover:bg-slate-100/60"
                     }`}
                   >
                     <FolderDot className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate text-left">{proj.name}</span>
+                    <span className="truncate text-left max-w-[140px] md:max-w-none">{proj.name}</span>
                   </button>
                 );
               })
@@ -134,7 +128,7 @@ export default function Chat() {
               studentProjectId && (
                 <button
                   onClick={() => setSelectedRoomId(studentProjectId)}
-                  className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-bold transition-all border ${
+                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all border whitespace-nowrap shrink-0 md:w-full ${
                     selectedRoomId === studentProjectId
                       ? "bg-blue-600 text-white border-blue-500 shadow-sm"
                       : "text-slate-600 hover:text-slate-800 bg-slate-50 border-slate-200/50 hover:bg-slate-100/60"

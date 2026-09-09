@@ -225,15 +225,16 @@ export default function MasterControl() {
         </form>
       </div>
 
-      {/* Directory Tab Selector */}
+      {/* Directory Management Panel */}
       <div className="glass-card bg-white p-6 rounded-3xl border border-blue-200/60 shadow-sm space-y-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
           <div>
-            <h2 className="text-lg font-black text-slate-900">Master Platform Directory</h2>
-            <p className="text-xs text-slate-500">View and manage all registered Master Admins, Teachers, and Students.</p>
+            <h2 className="text-lg font-black text-slate-900">TrackFlow User Directory & Permissions</h2>
+            <p className="text-xs text-slate-500">Manage Master Admins, Teacher Coordinators, and Student enrollments.</p>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          {/* Filter Tabs */}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 max-w-full">
             <button
               onClick={() => setDirectoryRole("pending")}
               className={`px-3 py-2 rounded-xl text-xs font-bold border transition ${

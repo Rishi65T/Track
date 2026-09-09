@@ -72,8 +72,8 @@ export default function MentorManagement() {
       </div>
 
       {/* Unassigned Projects Banner */}
-      {unassignedProjects.length > 0 && currentUser?.role === "coordinator" && (
-        <div className="bg-amber-50 border border-amber-200/80 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {unassignedProjects.length > 0 && (currentUser?.role === "coordinator" || currentUser?.role === "master_admin") && (
+        <div className="bg-amber-50 border border-amber-200/80 rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <ShieldAlert className="w-6 h-6 text-amber-600 flex-shrink-0" />
             <div>
@@ -85,7 +85,7 @@ export default function MentorManagement() {
               </p>
             </div>
           </div>
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex gap-2 flex-wrap max-w-full">
             {unassignedProjects.map(p => (
               <button
                 key={p.id || p._id}
@@ -93,9 +93,10 @@ export default function MentorManagement() {
                   setSelectedProject(p);
                   setShowAssignModal(true);
                 }}
-                className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold transition shadow-sm"
+                className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-xs font-semibold transition shadow-sm truncate max-w-[200px]"
+                title={`Assign Mentor to ${p.name}`}
               >
-                Assign Mentor: {p.name}
+                Assign: {p.name}
               </button>
             ))}
           </div>

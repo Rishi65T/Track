@@ -105,7 +105,7 @@ export default function ActivityAnalytics() {
           </div>
         </div>
 
-        <div className="h-64 w-full pt-4">
+        <div className="h-64 min-h-[260px] w-full pt-4">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <defs>

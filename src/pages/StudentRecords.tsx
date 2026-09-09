@@ -123,31 +123,31 @@ export default function StudentRecords() {
                 {/* Header Summary Row */}
                 <div
                   onClick={() => toggleExpand(student.id)}
-                  className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer hover:bg-slate-50"
+                  className="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer hover:bg-slate-50 overflow-hidden"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200/50 flex items-center justify-center text-blue-600 font-extrabold text-sm">
+                  <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200/50 flex items-center justify-center text-blue-600 font-extrabold text-sm flex-shrink-0">
                       {student.name.substring(0, 2).toUpperCase()}
                     </div>
-                    <div className="text-left">
-                      <h3 className="font-bold text-slate-800 text-base leading-snug">{student.name}</h3>
-                      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-slate-500 mt-0.5 font-medium">
-                        <span>{student.email}</span>
-                        <span className="text-slate-300">&bull;</span>
+                    <div className="text-left min-w-0 flex-1">
+                      <h3 className="font-bold text-slate-800 text-sm sm:text-base leading-snug truncate">{student.name}</h3>
+                      <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-slate-500 mt-0.5 font-medium">
+                        <span className="truncate max-w-[180px] sm:max-w-none">{student.email}</span>
+                        <span className="text-slate-300 hidden sm:inline">&bull;</span>
                         <span className="text-blue-600 font-bold">{student.department}</span>
-                        <span className="text-slate-300">&bull;</span>
-                        <span>Year {student.year}</span>
+                        <span className="text-slate-300 hidden sm:inline">&bull;</span>
+                        <span>Yr {student.year}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 border-slate-200 pt-3 md:pt-0">
-                    <div className="text-left md:text-right space-y-1">
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
+                  <div className="flex flex-wrap sm:flex-nowrap items-center justify-between md:justify-end gap-3 sm:gap-6 border-t md:border-t-0 border-slate-200 pt-3 md:pt-0">
+                    <div className="text-left md:text-right space-y-1 min-w-0">
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block">
                         Linked Project
                       </span>
                       <div className="flex items-center gap-2">
-                        <p className="text-xs font-bold text-slate-700 truncate max-w-[160px]">
+                        <p className="text-xs font-bold text-slate-700 truncate max-w-[130px] sm:max-w-[160px]">
                           {project ? project.name : "Unassigned"}
                         </p>
                         {(currentUser?.role === "coordinator" || currentUser?.role === "master_admin") && (
@@ -158,7 +158,7 @@ export default function StudentRecords() {
                               setAssigningStudent(student);
                               if (project) setSelectedProjectId(project.id);
                             }}
-                            className="px-2 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 text-[10px] font-bold rounded-lg border border-blue-200 flex items-center gap-1 transition"
+                            className="px-2 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 text-[10px] font-bold rounded-lg border border-blue-200 flex items-center gap-1 transition shrink-0"
                             title="Assign or reassign project"
                           >
                             <FolderPlus className="w-3 h-3 text-blue-600" />
@@ -168,8 +168,8 @@ export default function StudentRecords() {
                       </div>
                     </div>
 
-                    <div className="text-left md:text-right space-y-1">
-                      <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">
+                    <div className="text-left md:text-right space-y-1 shrink-0">
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500 block">
                         Last Activity
                       </span>
                       <div className="flex items-center gap-1.5 text-xs text-slate-600 font-semibold">
@@ -178,7 +178,7 @@ export default function StudentRecords() {
                       </div>
                     </div>
 
-                    <button className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-800">
+                    <button className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-800 shrink-0">
                       {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                     </button>
                   </div>

@@ -1010,12 +1010,12 @@ export default function ProjectDetails() {
                 abstractHistory.map((hist, idx) => (
                   <div
                     key={idx}
-                    className="relative pl-5 border-l-2 border-slate-200 space-y-1 text-left text-xs pb-3 last:pb-0"
+                    className="relative pl-4 sm:pl-5 border-l-2 border-slate-200 space-y-1 text-left text-xs pb-3 last:pb-0 min-w-0"
                   >
                     <div className="absolute -left-[5.5px] top-1 w-2.5 h-2.5 rounded-full bg-blue-600" />
-                    <div className="flex justify-between items-center text-slate-500">
-                      <span className="font-bold text-slate-800">Version {hist.version}</span>
-                      <span className="text-[10px] font-semibold">
+                    <div className="flex flex-wrap items-center justify-between gap-1 text-slate-500">
+                      <span className="font-bold text-slate-800 text-xs">Version {hist.version}</span>
+                      <span className="text-[10px] font-semibold text-slate-500">
                         {new Date(hist.updatedAt).toLocaleDateString()}
                       </span>
                     </div>

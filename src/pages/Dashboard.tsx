@@ -16,6 +16,7 @@ import {
   Cpu,
   AlertCircle,
   CheckCircle2,
+  Compass,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -547,12 +548,40 @@ export default function Dashboard() {
 
     if (!project) {
       return (
-        <div className="glass-card p-12 text-center border border-blue-200/40 max-w-xl mx-auto space-y-4">
-          <Briefcase className="w-10 h-10 text-blue-600 mx-auto" />
-          <h3 className="text-base font-bold text-slate-800">Workspace Pending Connection</h3>
-          <p className="text-sm text-slate-500 leading-relaxed font-semibold">
-            Your profile has been approved by the coordinator, but you have not yet been assigned to a project team workspace. Please contact Dr. Sarah Chen to coordinate your project setup.
-          </p>
+        <div className="space-y-6 text-left max-w-2xl mx-auto py-8">
+          <div className="glass-card p-6 sm:p-10 text-center border border-blue-200/60 bg-white/90 shadow-xl rounded-3xl space-y-6">
+            <div className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 border border-blue-200/60 flex items-center justify-center mx-auto shadow-sm">
+              <Briefcase className="w-8 h-8 text-blue-600" />
+            </div>
+            <div className="space-y-2">
+              <span className="inline-block text-[11px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 border border-blue-200/60 px-3 py-1 rounded-full">
+                Account Approved &bull; Pending Project Assignment
+              </span>
+              <h2 className="text-xl sm:text-2xl font-black text-slate-900">
+                Welcome to TrackFlow AI, {currentUser.name}!
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
+                Your student account has been approved by your department coordinator. Your project workspace is currently being setup by your lab supervisor. In the meantime, you can explore live coding challenges, register for upcoming hackathons, or customize your profile.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+              <Link
+                to="/opportunities"
+                className="flex items-center justify-center gap-2 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition shadow-lg shadow-blue-500/20 cursor-pointer"
+              >
+                <Compass className="w-4 h-4" />
+                <span>Browse Opportunities</span>
+              </Link>
+              <Link
+                to="/hackathons"
+                className="flex items-center justify-center gap-2 py-3 px-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-black uppercase tracking-wider transition shadow-md cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4 text-purple-400" />
+                <span>Explore Hackathons</span>
+              </Link>
+            </div>
+          </div>
         </div>
       );
     }

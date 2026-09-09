@@ -108,8 +108,8 @@ export default function Projects() {
       </div>
 
       {/* Filters Toolbar */}
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="flex-1 relative">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+        <div className="flex-1 relative w-full">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
@@ -119,12 +119,12 @@ export default function Projects() {
             className="w-full pl-10 pr-4 py-2.5 rounded-xl glass-input text-sm"
           />
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           <span className="text-xs text-slate-500 font-bold whitespace-nowrap hidden sm:inline">Filter Dept:</span>
           <select
             value={deptFilter}
             onChange={(e) => setDeptFilter(e.target.value)}
-            className="px-4 py-2.5 rounded-xl glass-input text-sm cursor-pointer"
+            className="w-full sm:w-auto px-4 py-2.5 rounded-xl glass-input text-sm cursor-pointer"
           >
             <option value="All" className="bg-white">All Departments</option>
             {departments.map((d) => (

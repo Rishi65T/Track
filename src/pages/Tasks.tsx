@@ -11,6 +11,7 @@ export default function Tasks() {
     createTask,
     updateTask,
     currentUser,
+    fetchApprovedStudents,
   } = useStore();
 
   const [showCreateModal, setShowCreateModal] = React.useState(false);
@@ -30,15 +31,12 @@ export default function Tasks() {
     fetchProjects();
     fetchTasks().then(() => setLoading(false));
 
-    if (currentUser?.role === "coordinator") {
-      fetch(`${API_BASE}/api/users/students`)
-        .then((r) => r.json())
-        .then((data) => {
-          if (data.students) setStudents(data.students);
-        })
-        .catch(() => {});
+    if (currentUser?.role === "coordinator" || currentUser?.role === "master_admin") {
+      fetchApprovedStudents().then((studentList) => {
+        if (Array.isArray(studentList)) setStudents(studentList);
+      });
     }
-  }, [fetchTasks, fetchProjects, currentUser]);
+  }, [fetchTasks, fetchProjects, fetchApprovedStudents, currentUser]);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useStore, API_BASE } from "../store.ts";
+import { useStore, API_BASE, getAuthHeaders } from "../store.ts";
 import {
   LayoutDashboard,
   Briefcase,
@@ -26,8 +26,8 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const [pendingCount, setPendingCount] = React.useState(0);
 
   React.useEffect(() => {
-    if (currentUser?.role === "coordinator") {
-      fetch(`${API_BASE}/api/approvals`)
+    if (currentUser?.role === "coordinator" || currentUser?.role === "master_admin") {
+      fetch(`${API_BASE}/api/approvals`, { headers: getAuthHeaders() })
         .then((r) => r.json())
         .then((data) => {
           if (data.requests) {
