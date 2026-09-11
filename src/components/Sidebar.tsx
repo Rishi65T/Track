@@ -105,25 +105,31 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       )}
 
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-40 w-64 glass-panel border-r border-slate-200 transition-transform duration-300 md:translate-x-0 ${
+        className={`fixed top-0 bottom-0 left-0 z-40 w-64 bg-white/95 backdrop-blur-xl border-r border-slate-200/80 shadow-[4px_0_24px_rgba(0,0,0,0.02)] transition-transform duration-300 md:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Logo Brand Header */}
-          <div className="flex items-center gap-3 px-6 h-20 border-b border-slate-200/60">
-            <div>
-              <h1 className="text-lg font-bold tracking-tight text-slate-800 leading-none">
-                TrackFlow <span className="text-blue-600">AI</span>
+          <div className="flex items-center gap-3 px-6 h-20 border-b border-slate-100">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white flex items-center justify-center font-black text-lg shadow-md shadow-indigo-500/20">
+              T
+            </div>
+            <div className="text-left">
+              <h1 className="text-lg font-black tracking-tight text-slate-900 leading-none">
+                TrackFlow <span className="text-indigo-600">AI</span>
               </h1>
-              <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">
-                Project Hub
+              <span className="inline-block mt-1 text-[9px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                Education Platform
               </span>
             </div>
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+          <nav className="flex-1 px-3 py-5 space-y-1.5 overflow-y-auto no-scrollbar">
+            <div className="px-3 pb-1.5 pt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              Menu Navigation
+            </div>
             {menuItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -132,22 +138,22 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   key={item.name}
                   to={item.path}
                   onClick={() => setIsOpen(false)}
-                  className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 group ${
+                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all duration-200 group ${
                     isActive
-                      ? "bg-blue-50/80 text-blue-600 border-l-4 border-blue-600 font-semibold shadow-sm"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70"
+                      ? "bg-indigo-50 text-indigo-600 font-bold shadow-sm border border-indigo-100/60"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon
-                      className={`w-5 h-5 transition-transform duration-200 group-hover:scale-110 ${
-                        isActive ? "text-blue-600" : "text-slate-500 group-hover:text-blue-600"
-                      }`}
-                    />
+                    <div className={`p-1.5 rounded-lg transition-colors ${
+                      isActive ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-500 group-hover:bg-indigo-100 group-hover:text-indigo-600"
+                    }`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
                     <span>{item.name}</span>
                   </div>
                   {item.badge !== undefined && item.badge > 0 && (
-                    <span className="flex items-center justify-center px-2 py-0.5 text-xs font-bold text-white bg-rose-500 rounded-full">
+                    <span className="flex items-center justify-center px-2 py-0.5 text-[10px] font-extrabold text-white bg-rose-500 rounded-full shadow-sm">
                       {item.badge}
                     </span>
                   )}
@@ -157,23 +163,26 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           </nav>
 
           {/* Footer User logout card */}
-          <div className="p-4 border-t border-slate-200/60">
-            <div className="flex items-center gap-3 p-2 mb-3 rounded-lg bg-slate-50 border border-slate-200/60">
-              <img
-                src={currentUser.avatar}
-                alt={currentUser.name}
-                className="w-9 h-9 rounded-full ring-2 ring-blue-500/30 object-cover"
-              />
+          <div className="p-4 border-t border-slate-100 bg-slate-50/50">
+            <div className="flex items-center gap-3 p-2.5 mb-2.5 rounded-2xl bg-white border border-slate-200/70 shadow-sm">
+              <div className="relative">
+                <img
+                  src={currentUser.avatar}
+                  alt={currentUser.name}
+                  className="w-9 h-9 rounded-xl ring-2 ring-indigo-500/20 object-cover"
+                />
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full" />
+              </div>
               <div className="flex-1 min-w-0 text-left">
-                <p className="text-sm font-semibold text-slate-800 truncate">{currentUser.name}</p>
-                <p className="text-xs text-slate-500 capitalize truncate">{currentUser.role}</p>
+                <p className="text-xs font-bold text-slate-900 truncate">{currentUser.name}</p>
+                <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider truncate">{currentUser.role}</p>
               </div>
             </div>
             <button
               onClick={logout}
-              className="flex items-center justify-center gap-2 w-full px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-rose-600 bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-xl transition-all"
+              className="flex items-center justify-center gap-2 w-full px-3 py-2 text-xs font-bold text-slate-600 hover:text-rose-600 bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-200 rounded-xl transition-all shadow-xs cursor-pointer"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-3.5 h-3.5" />
               <span>Sign Out</span>
             </button>
           </div>

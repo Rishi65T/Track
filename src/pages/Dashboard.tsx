@@ -142,8 +142,10 @@ export default function Dashboard() {
         title: "Approved Students",
         value: coordMetrics.totalStudents,
         icon: Users,
-        color: "text-blue-600",
-        bg: "bg-blue-50 border-blue-200/50 shadow-sm",
+        color: "text-indigo-600",
+        iconBg: "bg-indigo-50 border-indigo-100",
+        badge: "Learners",
+        badgeColor: "bg-indigo-50 text-indigo-700 border-indigo-100",
         link: "/records",
       },
       {
@@ -151,15 +153,19 @@ export default function Dashboard() {
         value: coordMetrics.pendingRequests,
         icon: ShieldAlert,
         color: "text-rose-600",
-        bg: "bg-rose-50 border-rose-200/50 shadow-sm",
+        iconBg: "bg-rose-50 border-rose-100",
+        badge: coordMetrics.pendingRequests > 0 ? "Needs Review" : "Up to date",
+        badgeColor: coordMetrics.pendingRequests > 0 ? "bg-rose-50 text-rose-700 border-rose-100 animate-pulse" : "bg-emerald-50 text-emerald-700 border-emerald-100",
         link: "/approvals",
       },
       {
         title: "Active Projects",
         value: coordMetrics.activeProjects,
         icon: Briefcase,
-        color: "text-indigo-600",
-        bg: "bg-indigo-50 border-indigo-200/50 shadow-sm",
+        color: "text-purple-600",
+        iconBg: "bg-purple-50 border-purple-100",
+        badge: "Active",
+        badgeColor: "bg-purple-50 text-purple-700 border-purple-100",
         link: "/projects",
       },
       {
@@ -167,7 +173,9 @@ export default function Dashboard() {
         value: (coordMetrics as any).projectsWithoutMentors || 0,
         icon: AlertCircle,
         color: "text-amber-600",
-        bg: "bg-amber-50 border-amber-200/50 shadow-sm",
+        iconBg: "bg-amber-50 border-amber-100",
+        badge: (coordMetrics as any).projectsWithoutMentors > 0 ? "Unassigned" : "All Set",
+        badgeColor: (coordMetrics as any).projectsWithoutMentors > 0 ? "bg-amber-50 text-amber-700 border-amber-100" : "bg-emerald-50 text-emerald-700 border-emerald-100",
         link: "/mentors",
       },
       {
@@ -175,23 +183,29 @@ export default function Dashboard() {
         value: coordMetrics.reportsSubmittedToday,
         icon: Calendar,
         color: "text-emerald-600",
-        bg: "bg-emerald-50 border-emerald-200 shadow-sm",
+        iconBg: "bg-emerald-50 border-emerald-100",
+        badge: "Daily Log",
+        badgeColor: "bg-emerald-50 text-emerald-700 border-emerald-100",
         link: "/daily-reports",
       },
       {
         title: "GitHub Connected",
         value: (coordMetrics as any).githubConnectedProjects || 0,
         icon: Github,
-        color: "text-slate-700",
-        bg: "bg-slate-100 border-slate-300 shadow-sm",
+        color: "text-slate-800",
+        iconBg: "bg-slate-100 border-slate-200",
+        badge: "Repositories",
+        badgeColor: "bg-slate-100 text-slate-700 border-slate-200",
         link: "/projects",
       },
       {
         title: "Active Hackathons",
         value: (coordMetrics as any).activeHackathons || 0,
         icon: Sparkles,
-        color: "text-purple-600",
-        bg: "bg-purple-50 border-purple-200 shadow-sm",
+        color: "text-pink-600",
+        iconBg: "bg-pink-50 border-pink-100",
+        badge: "Events",
+        badgeColor: "bg-pink-50 text-pink-700 border-pink-100",
         link: "/hackathons",
       },
       {
@@ -199,45 +213,83 @@ export default function Dashboard() {
         value: (coordMetrics as any).pendingScreenshotVerifications || 0,
         icon: CheckCircle2,
         color: "text-teal-600",
-        bg: "bg-teal-50 border-teal-200 shadow-sm",
+        iconBg: "bg-teal-50 border-teal-100",
+        badge: "Proofs",
+        badgeColor: "bg-teal-50 text-teal-700 border-teal-100",
         link: "/hackathons",
       },
     ];
 
     const chartData = [
-      { name: "Total Students", value: coordMetrics.totalStudents },
-      { name: "Active Projects", value: coordMetrics.activeProjects },
-      { name: "Pending Tasks", value: coordMetrics.pendingTasks },
+      { name: "Students", value: coordMetrics.totalStudents },
+      { name: "Projects", value: coordMetrics.activeProjects },
+      { name: "Tasks", value: coordMetrics.pendingTasks },
       { name: "Reports Today", value: coordMetrics.reportsSubmittedToday },
     ];
 
     return (
-      <div className="space-y-4 sm:space-y-6 text-left">
-        <div>
-          <h2 className="text-lg sm:text-xl font-bold text-slate-800 tracking-tight">Coordinator Admin Panel</h2>
-          <p className="text-xs sm:text-sm text-slate-500">
-            Overview of department activities, pending actions, and student sprint analytics.
-          </p>
+      <div className="space-y-6 text-left">
+        {/* Nixtio Hero Banner for Coordinator */}
+        <div className="nixtio-hero-banner p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="space-y-2 max-w-xl z-10">
+            <span className="inline-block text-[10px] font-extrabold uppercase tracking-wider text-indigo-200 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1 rounded-full">
+              Coordinator Dashboard &bull; Academic Management
+            </span>
+            <h1 className="text-xl sm:text-3xl font-black text-white tracking-tight leading-tight">
+              Welcome back, {currentUser.name}! 👋
+            </h1>
+            <p className="text-xs sm:text-sm text-indigo-100 font-medium leading-relaxed">
+              Track student project milestones, review daily report submissions, manage lab mentors, and execute AI health audits in real-time.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 z-10 shrink-0">
+            <Link
+              to="/approvals"
+              className="px-4 py-2.5 bg-white text-indigo-600 hover:bg-indigo-50 rounded-xl text-xs font-black transition shadow-lg shadow-indigo-900/20 flex items-center gap-2"
+            >
+              <ShieldAlert className="w-4 h-4 text-indigo-600" />
+              <span>Review Requests ({coordMetrics.pendingRequests})</span>
+            </Link>
+            <Link
+              to="/projects"
+              className="px-4 py-2.5 bg-indigo-700 hover:bg-indigo-800 text-white border border-indigo-400/40 rounded-xl text-xs font-bold transition flex items-center gap-2"
+            >
+              <Briefcase className="w-4 h-4" />
+              <span>Manage Projects</span>
+            </Link>
+          </div>
+
+          {/* Decorative Background Circles */}
+          <div className="absolute -right-12 -top-12 w-64 h-64 rounded-full bg-white/5 pointer-events-none" />
+          <div className="absolute right-32 -bottom-16 w-48 h-48 rounded-full bg-white/5 pointer-events-none" />
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-5 perspective-1000">
+        {/* Nixtio Stats Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
           {cards.map((card) => {
             const Icon = card.icon;
             return (
               <Link
                 key={card.title}
                 to={card.link}
-                className={`glass-card card-hyper-3d shine-effect p-3.5 sm:p-5 border flex items-center justify-between transition-all ${card.bg}`}
+                className="nixtio-card nixtio-card-hover p-4 sm:p-5 flex flex-col justify-between space-y-3 group"
               >
-                <div className="space-y-0.5 sm:space-y-1 text-left pop-out-3d min-w-0">
-                  <span className="text-[10px] sm:text-xs text-slate-500 font-bold uppercase tracking-wider block truncate">
+                <div className="flex items-center justify-between">
+                  <div className={`p-3 rounded-2xl ${card.iconBg} border ${card.color} shadow-xs group-hover:scale-105 transition-transform`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border ${card.badgeColor}`}>
+                    {card.badge}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight block">
+                    {card.value}
+                  </span>
+                  <span className="text-xs font-bold text-slate-500 mt-0.5 block truncate">
                     {card.title}
                   </span>
-                  <span className="text-lg sm:text-2xl font-extrabold text-slate-800 block">{card.value}</span>
-                </div>
-                <div className={`p-2 sm:p-3 rounded-xl sm:rounded-2xl bg-white/90 border border-slate-200/80 ${card.color} shadow-lg pop-out-3d-deep transform hover:scale-110 transition-transform shrink-0`}>
-                  <Icon className="w-4 h-4 sm:w-6 sm:h-6" />
                 </div>
               </Link>
             );
@@ -588,101 +640,155 @@ export default function Dashboard() {
 
     return (
       <div className="space-y-6 text-left">
-        {/* Student Welcome Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h2 className="text-xl font-bold text-slate-800 tracking-tight">
-              Welcome back, {currentUser.name}
-            </h2>
-            <p className="text-sm text-slate-500 font-semibold mt-0.5">
-              Sprint dashboard for project: <span className="text-blue-600 font-bold">{project.name}</span>
+        {/* Student Nixtio Hero Banner */}
+        <div className="nixtio-hero-banner p-6 sm:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="space-y-2 max-w-xl z-10">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-200 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1 rounded-full">
+                Learner Workspace &bull; {currentUser.department || "Lab Core"}
+              </span>
+              <span className={`text-[10px] font-extrabold px-3 py-1 rounded-full border ${
+                dailyReportStatus === "Submitted"
+                  ? "bg-emerald-500/20 text-emerald-200 border-emerald-400/30"
+                  : "bg-rose-500/20 text-rose-200 border-rose-400/30 animate-pulse"
+              }`}>
+                Daily Log: {dailyReportStatus}
+              </span>
+            </div>
+            <h1 className="text-xl sm:text-3xl font-black text-white tracking-tight leading-tight">
+              Welcome back, {currentUser.name}! 🚀
+            </h1>
+            <p className="text-xs sm:text-sm text-indigo-100 font-medium leading-relaxed">
+              Assigned Project: <span className="font-bold text-white underline decoration-indigo-300">{project.name}</span>
             </p>
           </div>
 
-          <div
-            className={`inline-flex items-center gap-2 px-4 py-2 border rounded-xl text-xs font-bold ${
-              dailyReportStatus === "Submitted"
-                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                : "bg-rose-50 text-rose-700 text-rose-700 border-rose-200 animate-pulse"
-            }`}
-          >
-            <Clock className="w-4 h-4" />
-            <span>Today&apos;s Daily Log: {dailyReportStatus}</span>
+          <div className="flex flex-wrap items-center gap-3 z-10 shrink-0">
+            <Link
+              to="/daily-reports"
+              className={`px-4 py-2.5 rounded-xl text-xs font-black transition shadow-lg flex items-center gap-2 ${
+                dailyReportStatus === "Submitted"
+                  ? "bg-white text-indigo-600 hover:bg-indigo-50"
+                  : "bg-amber-400 hover:bg-amber-300 text-slate-900 shadow-amber-500/30"
+              }`}
+            >
+              <Clock className="w-4 h-4" />
+              <span>{dailyReportStatus === "Submitted" ? "View Today's Log" : "Submit Daily Log Now"}</span>
+            </Link>
+            <Link
+              to="/project-hub"
+              className="px-4 py-2.5 bg-indigo-700 hover:bg-indigo-800 text-white border border-indigo-400/40 rounded-xl text-xs font-bold transition flex items-center gap-2"
+            >
+              <Briefcase className="w-4 h-4" />
+              <span>Project Hub</span>
+            </Link>
           </div>
+
+          {/* Decorative Circles */}
+          <div className="absolute -right-12 -top-12 w-64 h-64 rounded-full bg-white/5 pointer-events-none" />
+          <div className="absolute right-32 -bottom-16 w-48 h-48 rounded-full bg-white/5 pointer-events-none" />
         </div>
 
+        {/* Student Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Progress overview */}
-          <div className="lg:col-span-2 glass-card p-6 border border-blue-200/40 space-y-6 flex flex-col justify-between shadow-sm">
-            <div className="space-y-4 text-left">
-              <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                <TrendingUp className="w-4.5 h-4.5 text-blue-600" />
-                Project Milestone Analytics
-              </h3>
-              <p className="text-xs text-slate-500 bg-white border border-slate-200/50 p-3 rounded-xl font-medium leading-relaxed">
-                Current documentation synopsis: &quot;{project.abstract || "Pending details..."}&quot;
-              </p>
+          {/* Progress Overview Card */}
+          <div className="lg:col-span-2 nixtio-card p-6 border border-slate-200/80 space-y-6 flex flex-col justify-between">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-indigo-600" />
+                  Project Overview & Milestone Synopsis
+                </h3>
+                <span className="text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-3 py-1 rounded-full">
+                  Domain: {project.domain || "Tech Lab"}
+                </span>
+              </div>
+
+              <div className="bg-slate-50 border border-slate-200/70 p-4 rounded-2xl space-y-2">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Project Abstract</span>
+                <p className="text-xs text-slate-700 font-medium leading-relaxed">
+                  {project.abstract || "Project documentation is actively being configured by your lab coordinator."}
+                </p>
+              </div>
+
+              {/* Progress bar visual mockup */}
+              <div className="space-y-2 pt-2">
+                <div className="flex justify-between text-xs font-bold text-slate-700">
+                  <span>Sprint Completion Status</span>
+                  <span className="text-indigo-600">75% Complete</span>
+                </div>
+                <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden p-0.5 border border-slate-200/60">
+                  <div className="bg-gradient-to-r from-indigo-600 to-indigo-400 h-full rounded-full transition-all duration-500" style={{ width: "75%" }} />
+                </div>
+              </div>
             </div>
 
-            <div className="py-4 border-t border-slate-100 mt-2 text-xs text-slate-400 font-semibold italic text-center">
-              Detailed progress metrics and health tracking are restricted to the Coordinator dashboard.
-            </div>
-
-            <div className="flex justify-end pt-3">
+            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+              <span className="text-xs text-slate-500 font-semibold">
+                GitHub Repo: <span className="text-slate-800 font-mono font-bold">{project.githubRepo || "Not linked"}</span>
+              </span>
               <Link
                 to="/project-hub"
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition shadow-lg shadow-blue-500/10"
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-indigo-600/20"
               >
-                <span>Open Project Hub</span>
+                <span>Explore Full Workspace</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
           </div>
 
-          {/* Upcoming deadlines list */}
-          <div className="glass-card p-5 border border-blue-200/40 space-y-4 text-left shadow-sm">
-            <h3 className="text-sm font-bold text-slate-800 text-slate-800 flex items-center gap-2 pb-2 border-b border-slate-200">
-              <CheckSquare className="w-4.5 h-4.5 text-blue-600" />
-              Sprint Deliverables (Top 5)
-            </h3>
+          {/* Deliverables Checklist Side Widget */}
+          <div className="nixtio-card p-6 border border-slate-200/80 space-y-4 flex flex-col justify-between">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                  <CheckSquare className="w-4.5 h-4.5 text-indigo-600" />
+                  Sprint Deliverables
+                </h3>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  Top 5 Tasks
+                </span>
+              </div>
 
-            <div className="space-y-2.5 max-h-60 overflow-y-auto pr-1">
-              {upcomingDeadlines.length === 0 ? (
-                <div className="py-10 text-center text-xs text-slate-400">
-                  No pending deliverables. Good job!
-                </div>
-              ) : (
-                upcomingDeadlines.map((t) => (
-                  <div
-                    key={t.id || t._id}
-                    className="p-3 rounded-xl bg-white border border-slate-200 flex items-center justify-between gap-3 text-xs shadow-sm"
-                  >
-                    <div>
-                      <p className="font-bold text-slate-800 truncate max-w-[130px]">{t.title}</p>
-                      <p className="text-[10px] text-slate-500 font-semibold mt-0.5">Due: {t.date}</p>
-                    </div>
-                    <span
-                      className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase ${
-                        t.priority === "high"
-                          ? "bg-rose-50 text-rose-700 border border-rose-200"
-                          : t.priority === "medium"
-                          ? "bg-amber-50 text-amber-700 border border-amber-200"
-                          : "bg-blue-50 text-blue-700 border border-blue-200"
-                      }`}
-                    >
-                      {t.priority}
-                    </span>
+              <div className="space-y-2.5 max-h-64 overflow-y-auto pr-1 no-scrollbar">
+                {upcomingDeadlines.length === 0 ? (
+                  <div className="py-10 text-center text-xs text-slate-400 font-medium">
+                    ✨ All sprint deliverables completed!
                   </div>
-                ))
-              )}
+                ) : (
+                  upcomingDeadlines.map((t) => (
+                    <div
+                      key={t.id || t._id}
+                      className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 hover:border-indigo-200 flex items-center justify-between gap-3 text-xs transition"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="font-bold text-slate-900 truncate">{t.title}</p>
+                        <p className="text-[10px] text-slate-500 font-semibold mt-0.5">Due: {t.date}</p>
+                      </div>
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase shrink-0 ${
+                          t.priority === "high"
+                            ? "bg-rose-50 text-rose-700 border border-rose-200"
+                            : t.priority === "medium"
+                            ? "bg-amber-50 text-amber-700 border border-amber-200"
+                            : "bg-indigo-50 text-indigo-700 border border-indigo-200"
+                        }`}
+                      >
+                        {t.priority}
+                      </span>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
 
-            <div className="pt-2">
+            <div className="pt-3 border-t border-slate-100">
               <Link
                 to="/tasks"
-                className="w-full flex items-center justify-center gap-1.5 py-2.5 px-4 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800 border border-slate-200 rounded-xl text-xs font-bold transition"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition cursor-pointer"
               >
-                <span>View Full Tasks Board</span>
+                <span>Go to Tasks Board</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
           </div>
