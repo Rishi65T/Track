@@ -197,13 +197,6 @@ export default function Opportunities() {
               Coordinator Control Dashboard
             </Link>
           )}
-          <button
-            onClick={toggleDarkMode}
-            className="p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 hover:text-blue-600 transition"
-            title="Toggle theme"
-          >
-            {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-blue-600" />}
-          </button>
         </div>
       </div>
 
