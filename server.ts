@@ -412,7 +412,7 @@ async function startServer() {
           const cleanVal = this.sanitizeForFirestore(v);
           if (cleanVal !== undefined) res[k] = cleanVal;
         }
-        return JSON.parse(JSON.stringify(res));
+        return res;
       }
       return val;
     }
