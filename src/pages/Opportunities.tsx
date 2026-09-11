@@ -30,19 +30,19 @@ import { motion, AnimatePresence } from "framer-motion";
 
 // Category Config with Icons and Colors
 const CATEGORIES_CONFIG = [
-  { name: "Jobs", icon: "🏢", gradient: "from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20", border: "border-blue-500/20 text-blue-600 dark:text-blue-400" },
-  { name: "Hackathons", icon: "💻", gradient: "from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20", border: "border-blue-500/20 text-blue-600 dark:text-blue-400" },
-  { name: "Internships", icon: "💼", gradient: "from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20", border: "border-emerald-500/20 text-emerald-600 dark:text-emerald-400" },
-  { name: "Coding Contests", icon: "🏆", gradient: "from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20", border: "border-amber-500/20 text-amber-600 dark:text-amber-400" },
-  { name: "Scholarships", icon: "🎓", gradient: "from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20", border: "border-violet-500/20 text-violet-600 dark:text-violet-400" },
-  { name: "Workshops", icon: "📚", gradient: "from-rose-500/10 to-pink-500/10 dark:from-rose-500/20 dark:to-pink-500/20", border: "border-rose-500/20 text-rose-600 dark:text-rose-400" },
-  { name: "Webinars", icon: "🎤", gradient: "from-cyan-500/10 to-blue-500/10 dark:from-cyan-500/20 dark:to-blue-500/20", border: "border-cyan-500/20 text-cyan-600 dark:text-cyan-400" },
-  { name: "Conferences", icon: "🌍", gradient: "from-sky-500/10 to-indigo-500/10 dark:from-sky-500/20 dark:to-indigo-500/20", border: "border-sky-500/20 text-sky-600 dark:text-sky-400" },
-  { name: "Open Source", icon: "❤️", gradient: "from-red-500/10 to-rose-500/10 dark:from-red-500/20 dark:to-rose-500/20", border: "border-red-500/20 text-red-600 dark:text-red-400" },
-  { name: "Research", icon: "🔬", gradient: "from-teal-500/10 to-emerald-500/10 dark:from-teal-500/20 dark:to-emerald-500/20", border: "border-teal-500/20 text-teal-600 dark:text-teal-400" },
-  { name: "Bootcamps", icon: "🚀", gradient: "from-fuchsia-500/10 to-pink-500/10 dark:from-fuchsia-500/20 dark:to-pink-500/20", border: "border-fuchsia-500/20 text-fuchsia-600 dark:text-fuchsia-400" },
-  { name: "Fellowships", icon: "🏅", gradient: "from-yellow-500/10 to-amber-500/10 dark:from-yellow-500/20 dark:to-amber-500/20", border: "border-yellow-500/20 text-yellow-600 dark:text-yellow-400" },
-  { name: "Innovation Challenges", icon: "💡", gradient: "from-indigo-500/10 to-violet-500/10 dark:from-indigo-500/20 dark:to-violet-500/20", border: "border-indigo-500/20 text-indigo-600 dark:text-indigo-400" }
+  { name: "Jobs", icon: "", gradient: "from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20", border: "border-blue-500/20 text-blue-600 dark:text-blue-400" },
+  { name: "Hackathons", icon: "", gradient: "from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20", border: "border-blue-500/20 text-blue-600 dark:text-blue-400" },
+  { name: "Internships", icon: "", gradient: "from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20", border: "border-emerald-500/20 text-emerald-600 dark:text-emerald-400" },
+  { name: "Coding Contests", icon: "", gradient: "from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20", border: "border-amber-500/20 text-amber-600 dark:text-amber-400" },
+  { name: "Scholarships", icon: "", gradient: "from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20", border: "border-violet-500/20 text-violet-600 dark:text-violet-400" },
+  { name: "Workshops", icon: "", gradient: "from-rose-500/10 to-pink-500/10 dark:from-rose-500/20 dark:to-pink-500/20", border: "border-rose-500/20 text-rose-600 dark:text-rose-400" },
+  { name: "Webinars", icon: "", gradient: "from-cyan-500/10 to-blue-500/10 dark:from-cyan-500/20 dark:to-blue-500/20", border: "border-cyan-500/20 text-cyan-600 dark:text-cyan-400" },
+  { name: "Conferences", icon: "", gradient: "from-sky-500/10 to-indigo-500/10 dark:from-sky-500/20 dark:to-indigo-500/20", border: "border-sky-500/20 text-sky-600 dark:text-sky-400" },
+  { name: "Open Source", icon: "", gradient: "from-red-500/10 to-rose-500/10 dark:from-red-500/20 dark:to-rose-500/20", border: "border-red-500/20 text-red-600 dark:text-red-400" },
+  { name: "Research", icon: "", gradient: "from-teal-500/10 to-emerald-500/10 dark:from-teal-500/20 dark:to-emerald-500/20", border: "border-teal-500/20 text-teal-600 dark:text-teal-400" },
+  { name: "Bootcamps", icon: "", gradient: "from-fuchsia-500/10 to-pink-500/10 dark:from-fuchsia-500/20 dark:to-pink-500/20", border: "border-fuchsia-500/20 text-fuchsia-600 dark:text-fuchsia-400" },
+  { name: "Fellowships", icon: "", gradient: "from-yellow-500/10 to-amber-500/10 dark:from-yellow-500/20 dark:to-amber-500/20", border: "border-yellow-500/20 text-yellow-600 dark:text-yellow-400" },
+  { name: "Innovation Challenges", icon: "", gradient: "from-indigo-500/10 to-violet-500/10 dark:from-indigo-500/20 dark:to-violet-500/20", border: "border-indigo-500/20 text-indigo-600 dark:text-indigo-400" }
 ];
 
 export default function Opportunities() {

@@ -112,9 +112,6 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         <div className="flex flex-col h-full">
           {/* Logo Brand Header */}
           <div className="flex items-center gap-3 px-6 h-20 border-b border-slate-200/60">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-600 shadow-lg shadow-blue-500/20">
-              <Sparkles className="w-5 h-5 text-white animate-pulse" />
-            </div>
             <div>
               <h1 className="text-lg font-bold tracking-tight text-slate-800 leading-none">
                 TrackFlow <span className="text-blue-600">AI</span>
