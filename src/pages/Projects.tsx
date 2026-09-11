@@ -146,7 +146,7 @@ export default function Projects() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-5 w-full">
           {filteredProjects.map((project) => (
             <div
               key={project.id || project._id}

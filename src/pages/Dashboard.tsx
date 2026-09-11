@@ -265,8 +265,8 @@ export default function Dashboard() {
           <div className="absolute right-32 -bottom-16 w-48 h-48 rounded-full bg-white/5 pointer-events-none" />
         </div>
 
-        {/* Nixtio Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+        {/* Nixtio Fluid Stats Grid */}
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,13rem),1fr))] gap-3.5 sm:gap-5 w-full">
           {cards.map((card) => {
             const Icon = card.icon;
             return (

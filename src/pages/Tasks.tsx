@@ -169,7 +169,7 @@ export default function Tasks() {
       </div>
 
       {/* Board columns */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-6 w-full">
         {/* Column 1: Not Started */}
         <div className="space-y-4">
           <div className="flex items-center justify-between pb-2 border-b border-slate-200">

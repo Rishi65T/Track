@@ -67,7 +67,7 @@ export default function Header({ onMenuToggle }: HeaderProps) {
       </div>
 
       {/* Center Quick Search (EdTech Search Bar) */}
-      <div className="hidden lg:flex items-center relative w-72">
+      <div className="hidden lg:flex items-center relative w-full max-w-[18rem]">
         <Search className="w-4 h-4 text-slate-400 absolute left-3.5 pointer-events-none" />
         <input
           type="text"
@@ -106,7 +106,7 @@ export default function Header({ onMenuToggle }: HeaderProps) {
                 className="fixed inset-0 z-40"
                 onClick={() => setShowNotifs(false)}
               />
-              <div className="absolute right-0 mt-3 z-50 w-[calc(100vw-2rem)] sm:w-88 rounded-2xl bg-white border border-slate-200/90 p-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+              <div className="absolute right-0 mt-3 z-50 w-[88vw] max-w-[22rem] rounded-2xl bg-white border border-slate-200/90 p-4 shadow-2xl animate-in fade-in zoom-in-95 duration-150">
                 <div className="flex items-center justify-between mb-3 pb-2.5 border-b border-slate-100">
                   <div className="flex items-center gap-2">
                     <h3 className="font-extrabold text-sm text-slate-900">Notifications</h3>

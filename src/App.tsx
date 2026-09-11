@@ -107,14 +107,14 @@ export default function App() {
   // Main Dashboard Shell
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-[#f1f5f9] text-slate-800 relative selection:bg-blue-500 selection:text-white overflow-x-hidden">
+      <div className="min-h-screen w-full max-w-[100vw] bg-[#f8fafc] text-slate-800 relative selection:bg-indigo-500 selection:text-white overflow-x-hidden">
         <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
 
         {/* Content Shell */}
-        <div className="flex-1 md:pl-64 flex flex-col min-h-screen">
+        <div className="flex-1 md:pl-64 flex flex-col min-h-screen w-full max-w-full">
           <Header onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
           
-          <main className="flex-1 p-6 overflow-y-auto">
+          <main className="flex-1 p-3 sm:p-5 lg:p-7 w-full max-w-7xl mx-auto overflow-y-auto overflow-x-hidden">
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/master-control" element={<MasterControl />} />
