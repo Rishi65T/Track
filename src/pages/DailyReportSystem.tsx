@@ -46,12 +46,9 @@ export default function DailyReportSystem() {
 
   const fetchAllDailyReportsForCoordinator = async () => {
     try {
-      const allReports: DailyReportInfo[] = [];
-      for (const p of projects) {
-        const list = await fetchDailyReports(p._id || p.id);
-        allReports.push(...list);
-      }
-      setReportsHistory(allReports);
+      const promises = projects.map(p => fetchDailyReports(p._id || p.id));
+      const results = await Promise.all(promises);
+      setReportsHistory(results.flat());
     } catch (e) {}
   };
 
